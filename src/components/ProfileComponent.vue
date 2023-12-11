@@ -4,22 +4,17 @@
       <!-- Logo or application name -->
       <div class="logo">
         <img src="@/assets/logo.png" alt="Logo" />
-        <span>Mail</span>
+        <span>Gmail</span>
       </div>
 
       <!-- Navigation links with blue GIF icons -->
       <nav class="nav-links">
 
-        <!-- 
         <router-link to="/compose" class="nav-link">
-          <img src="@/assets/compose.gif" class="animated-icon" alt="Compose Icon" /> Compose
+          <img src="@/assets/compose.gif" class="animated-icon" alt="Compose Icon" width="50" height="50"/>
+           Compose
         </router-link>
 
-      
-        <router-link to="/drafts" class="nav-link">
-          <img src="@/assets/drafts.gif" class="animated-icon" alt="Drafts Icon" /> Drafts
-        </router-link>
-        -->
         <router-link to="/inbox" class="nav-link">
           <img src="@/assets/inbox.gif" class="animated-icon" alt="Inbox Icon" width="50" height="50" />
           Inbox
@@ -32,23 +27,27 @@
           <img src="@/assets/contact.gif" class="animated-icon" alt="Contacts Icon" width="50" height="50" />
           Contacts
         </router-link>
-        <!-- 
-        <router-link to="/trash" class="nav-link">
-          <img src="@/assets/trash.gif" class="animated-icon" alt="Trash Icon" /> Trash
+
+        <router-link to="/drafts" class="nav-link">
+          <img src="@/assets/drafts.png" class="animated-icon" alt="Drafts Icon" width="50" height="50" />
+           Drafts
         </router-link>
 
-      -->
+        <router-link to="/trash" class="nav-link">
+          <img src="@/assets/trash.gif" class="animated-icon" alt="Trash Icon" width="50" height="50" /> 
+          Trash
+        </router-link>
+
         <router-link to="/folders" class="nav-link">
           <img src="@/assets/folders.gif" class="animated-icon" alt="Folders Icon" width="50" height="50" />
           Folders
         </router-link>
 
-        <!-- 
         <router-link to="/logout" class="nav-link">
-          <img src="@/assets/logout.gif" class="animated-icon" alt="Logout Icon" /> Logout
+          <img src="@/assets/logout.png" class="animated-icon" alt="Logout Icon" width="50" height="50"  /> Logout
         </router-link>
 
-      -->
+
       </nav>
     </aside>
 
