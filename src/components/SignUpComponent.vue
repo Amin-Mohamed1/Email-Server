@@ -18,7 +18,7 @@
                 <input type="text" placeholder="Enter your name" required>
               </div>
               <div class="input-box">
-                <input type="text" placeholder="Enter your email" required>
+                <input type="email" placeholder="Enter your email" required>
               </div>
               <div class="input-box">
                 <input type="password" placeholder="Create password" required>

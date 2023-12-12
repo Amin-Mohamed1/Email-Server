@@ -15,7 +15,7 @@
             <h2>Login</h2>
             <form action="#">
               <div class="input-box">
-                <input type="text" placeholder="Enter your email" required>
+                <input type="email" placeholder="Enter your email" required>
               </div>
               <div class="input-box">
                 <input type="password" placeholder="Enter your password" required>

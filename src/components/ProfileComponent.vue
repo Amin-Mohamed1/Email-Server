@@ -9,7 +9,7 @@
 
       <nav class="nav-links">
 
-        <router-link to="/compose" class="nav-link">
+        <router-link to="/profile/compose" class="nav-link">
           <img src="@/assets/compose.gif" class="animated-icon" alt="Compose Icon" width="50" height="50"/>
            Compose
         </router-link>
@@ -18,12 +18,12 @@
           <img src="@/assets/inbox.gif" class="animated-icon" alt="Inbox Icon" width="50" height="50" />
           Inbox
         </router-link>
-
         
         <router-link to="/sent" class="nav-link">
           <img src="@/assets/sent.gif" class="animated-icon" alt="Sent Icon" width="50" height="50" />
           Sent
         </router-link>
+
         <router-link to="/contacts" class="nav-link">
           <img src="@/assets/contact.gif" class="animated-icon" alt="Contacts Icon" width="50" height="50" />
           Contacts
