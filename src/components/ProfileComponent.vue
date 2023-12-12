@@ -1,13 +1,12 @@
 <template>
   <div class="app-container">
     <aside class="sidebar" :class="{ 'expanded': isSidebarExpanded }" @mouseover="expandSidebar" @mouseleave="collapseSidebar">
-      <!-- Logo or application name -->
+
       <div class="logo">
         <img src="@/assets/logo.png" alt="Logo" />
         <span>Gmail</span>
       </div>
 
-      <!-- Navigation links with blue GIF icons -->
       <nav class="nav-links">
 
         <router-link to="/compose" class="nav-link">
@@ -15,10 +14,12 @@
            Compose
         </router-link>
 
-        <router-link to="/inbox" class="nav-link">
+        <router-link to="/profile/inbox" class="nav-link">
           <img src="@/assets/inbox.gif" class="animated-icon" alt="Inbox Icon" width="50" height="50" />
           Inbox
         </router-link>
+
+        
         <router-link to="/sent" class="nav-link">
           <img src="@/assets/sent.gif" class="animated-icon" alt="Sent Icon" width="50" height="50" />
           Sent
@@ -46,13 +47,13 @@
         <router-link to="/logout" class="nav-link">
           <img src="@/assets/logout.png" class="animated-icon" alt="Logout Icon" width="50" height="50"  /> Logout
         </router-link>
-
-
       </nav>
+      
     </aside>
-
     <main class="main-content">
-      <!-- Your main content goes here -->
+      <div class = "utility" >
+        <FilterComponent />
+      </div>
       <router-view></router-view>
     </main>
   </div>
@@ -61,7 +62,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
-
+import FilterComponent from './FilterComponent.vue';
 const router = useRouter();
 const isSidebarExpanded = ref(false);
 
@@ -80,6 +81,10 @@ const collapseSidebar = () => {
 
 <style scoped>
 .app-container {
+  display: flex;
+}
+
+.utility{
   display: flex;
 }
 
@@ -120,7 +125,7 @@ const collapseSidebar = () => {
   padding: 8px;
   margin: 4px 0;
   text-decoration: none;
-  color: #007BFF; /* Blue color */
+  color: #007BFF;
   border-radius: 4px;
   transition: background-color 0.3s;
 }
@@ -131,8 +136,8 @@ const collapseSidebar = () => {
 }
 
 .nav-links .nav-link .animated-icon img {
-  width: 20px; /* Adjust the width as needed */
-  height: 20px; /* Adjust the height as needed */
+  width: 20px;
+  height: 20px;
 }
 
 .nav-links .nav-link:hover {
@@ -140,8 +145,8 @@ const collapseSidebar = () => {
 }
 
 .nav-links .nav-link:hover .animated-icon {
-  transform: scale(1.2); /* Increase the size on hover */
-  animation: pulse 1s infinite; /* Pulse animation on hover */
+  transform: scale(1.2);
+  animation: pulse 1s infinite;
 }
 
 @keyframes pulse {
@@ -159,7 +164,7 @@ const collapseSidebar = () => {
 .main-content {
   flex: 1;
   padding: 20px;
-  height: 100vh; /* Set the height to 100% of the viewport height */
-  overflow-y: auto; /* Add scrollbar if content exceeds the height */
+  height: 100vh;
+  overflow-y: auto;
 }
 </style>
