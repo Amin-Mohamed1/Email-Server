@@ -24,22 +24,26 @@
           Sent
         </router-link>
 
+<<<<<<< Updated upstream
         <router-link to="/profile/contact" class="nav-link">
+=======
+        <router-link to="/profile/contacts" class="nav-link">
+>>>>>>> Stashed changes
           <img src="@/assets/contact.gif" class="animated-icon" alt="Contacts Icon" width="50" height="50" />
           Contacts
         </router-link>
 
-        <router-link to="/drafts" class="nav-link">
+        <router-link to="/profile/drafts" class="nav-link">
           <img src="@/assets/drafts.png" class="animated-icon" alt="Drafts Icon" width="50" height="50" />
            Drafts
         </router-link>
 
-        <router-link to="/trash" class="nav-link">
+        <router-link to="/profile/trash" class="nav-link">
           <img src="@/assets/trash.gif" class="animated-icon" alt="Trash Icon" width="50" height="50" /> 
           Trash
         </router-link>
 
-        <router-link to="/folders" class="nav-link">
+        <router-link to="/profile/folders" class="nav-link">
           <img src="@/assets/folders.gif" class="animated-icon" alt="Folders Icon" width="50" height="50" />
           Folders
         </router-link>
