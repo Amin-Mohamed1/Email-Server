@@ -12,8 +12,9 @@
       <div class="child">
         <main>
           <div class="wrapper">
+            
             <h2>Login</h2>
-            <form action="#">
+            <form action="#" @submit.prevent="validateLogin">
               <div class="input-box">
                 <input type="email" placeholder="Enter your email" required>
               </div>
@@ -27,6 +28,7 @@
                 <h3>Not have an account? <router-link to="/signup">Sign up</router-link></h3>
               </div>
             </form>
+            
           </div>
         </main>
       </div>
@@ -34,17 +36,47 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-  
+
 const router = useRouter();
-  
+
+let email = ref('');
+let password = ref('');
+
 const goToHomePage = () => {
-    router.push('/home');
+  router.push('/home');
 };
 
+const goToProfilePage = () => {
+  router.push('/profile');
+};
 
-  
+const validateLogin = () => {
+  fetch('http://localhost/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ email: email.value, password: password.value }),
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      const token = data.token;
+      console.log(token);
+      goToProfilePage();
+    })
+    .catch(error => {
+      console.error('Login failed:', error);
+    });
+};
 </script>
+
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
@@ -107,11 +139,11 @@ body{
   align-items: center;
   justify-content: center;
   background: #4070f4;
-  animation: fadeIn 1s ease-in-out; /* Fade-in animation */
+  animation: fadeIn 1s ease-in-out;
 }
 .wrapper {
   position: relative;
-  max-width: 400px; /* Adjust the width as needed */
+  max-width: 400px;
   width: 100%;
   background: #fff;
   padding: 34px;
@@ -119,7 +151,7 @@ body{
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
   text-align: center;
   opacity: 0;
-  margin: auto; /* Center the form */
+  margin: auto;
   animation: slideIn 1s forwards ease-in-out;
   transform: translateY(40px);
 }
@@ -168,7 +200,7 @@ form .input-box input{
 form .policy{
   display: flex;
   align-items: center;
-  justify-content: center; /* Center the policy checkbox and text */
+  justify-content: center; 
   margin-top: 20px;
 }
 form h3{
@@ -202,7 +234,6 @@ form .text h3 a:hover{
   text-decoration: underline;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
