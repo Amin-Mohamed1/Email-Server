@@ -21,6 +21,9 @@
                 <input type="email" placeholder="Enter your email" required>
               </div>
               <div class="input-box">
+                <input v-model="birthdate" type="date" id="birthdate" required>
+              </div>
+              <div class="input-box">
                 <input type="password" placeholder="Create password" required>
               </div>
               <div class="input-box">
@@ -42,16 +45,65 @@
       </div>
   </div>
 </template>
-
 <script setup>
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+let name = ref('');
+let email = ref('');
+let password = ref('');
+let confirmPassword = ref('');
+let birthdate = ref('');
+let acceptTerms = ref(false);
+
+const validateSignup = () => {
+
+  if (password !== confirmPassword) {
+    alert('Passwords do not match.');
+    return;
+  }
+
+  const validBirthdate = isValidBirthdate(birthdate);
+  if (!validBirthdate) {
+    alert('Invalid birth date. Please enter a valid birth date.');
+    return;
+  }
+
+  fetch('http://localhost/signup', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      name: name.value,
+      email: email.value,
+      password: password.value,
+      birthdate: birthdate.value,
+      acceptTerms: acceptTerms.value,
+    }),
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      const token = data.token;
+      console.log(token);
+      goToProfilePage();
+    })
+    .catch(error => {
+      console.error('Signup failed:', error);
+    });
+};
+
+const isValidBirthdate = (birthdate) => {
   
-  const router = useRouter();
-  
-  const goToHomePage = () => {
-    router.push('/home');
-  };
-  
+  return true;
+};
 </script>
 
 <style scoped>
@@ -115,11 +167,11 @@ body{
   align-items: center;
   justify-content: center;
   background: #4070f4;
-  animation: fadeIn 1s ease-in-out; /* Fade-in animation */
+  animation: fadeIn 1s ease-in-out;
 }
 .wrapper {
   position: relative;
-  max-width: 400px; /* Adjust the width as needed */
+  max-width: 400px;
   width: 100%;
   background: #fff;
   padding: 34px;
@@ -129,7 +181,7 @@ body{
   opacity: 0;
   margin: auto; /* Center the form */
   animation: slideIn 1s forwards ease-in-out;
-  transform: translateY(20px); /* Adjust this value to move it upward */
+  transform: translateY(20px);
 }
 .wrapper h2{
   position: relative;
@@ -176,7 +228,7 @@ form .input-box input{
 form .policy{
   display: flex;
   align-items: center;
-  justify-content: center; /* Center the policy checkbox and text */
+  justify-content: center;
   margin-top: 20px;
 }
 form h3{
@@ -210,7 +262,6 @@ form .text h3 a:hover{
   text-decoration: underline;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
