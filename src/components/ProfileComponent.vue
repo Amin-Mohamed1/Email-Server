@@ -19,12 +19,12 @@
           Inbox
         </router-link>
         
-        <router-link to="/sent" class="nav-link">
+        <router-link to="/profile/sent" class="nav-link">
           <img src="@/assets/sent.gif" class="animated-icon" alt="Sent Icon" width="50" height="50" />
           Sent
         </router-link>
 
-        <router-link to="/contacts" class="nav-link">
+        <router-link to="/profile/contact" class="nav-link">
           <img src="@/assets/contact.gif" class="animated-icon" alt="Contacts Icon" width="50" height="50" />
           Contacts
         </router-link>
