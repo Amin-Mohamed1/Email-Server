@@ -8,50 +8,39 @@
       </div>
 
       <nav class="nav-links">
+          <router-link to="/profile/compose" class="nav-link" style="color: #3498db;" active-class="router-link-active">
+            <i class="fas fa-pen animated-icon"></i> Compose
+          </router-link>
 
-        <router-link to="/profile/compose" class="nav-link">
-          <img src="@/assets/compose.gif" class="animated-icon" alt="Compose Icon" width="50" height="50"/>
-           Compose
-        </router-link>
+          <router-link to="/profile/inbox" class="nav-link" style="color: #2ecc71;" active-class="router-link-active">
+            <i class="fas fa-inbox animated-icon"></i> Inbox
+          </router-link>
 
-        <router-link to="/profile/inbox" class="nav-link">
-          <img src="@/assets/inbox.gif" class="animated-icon" alt="Inbox Icon" width="50" height="50" />
-          Inbox
-        </router-link>
-        
-        <router-link to="/profile/sent" class="nav-link">
-          <img src="@/assets/sent.gif" class="animated-icon" alt="Sent Icon" width="50" height="50" />
-          Sent
-        </router-link>
+          <router-link to="/profile/sent" class="nav-link" style="color: #e67e22;" active-class="router-link-active">
+            <i class="fas fa-paper-plane animated-icon"></i> Sent
+          </router-link>
 
-<<<<<<< Updated upstream
-        <router-link to="/profile/contact" class="nav-link">
-=======
-        <router-link to="/profile/contacts" class="nav-link">
->>>>>>> Stashed changes
-          <img src="@/assets/contact.gif" class="animated-icon" alt="Contacts Icon" width="50" height="50" />
-          Contacts
-        </router-link>
+          <router-link to="/profile/contact" class="nav-link" style="color: #9b59b6;" active-class="router-link-active">
+            <i class="fas fa-address-book animated-icon"></i> Contacts
+          </router-link>
 
-        <router-link to="/profile/drafts" class="nav-link">
-          <img src="@/assets/drafts.png" class="animated-icon" alt="Drafts Icon" width="50" height="50" />
-           Drafts
-        </router-link>
+          <router-link to="/profile/draft" class="nav-link" style="color: #e74c3c;" active-class="router-link-active">
+            <i class="fas fa-file-alt animated-icon"></i> Drafts
+          </router-link>
 
-        <router-link to="/profile/trash" class="nav-link">
-          <img src="@/assets/trash.gif" class="animated-icon" alt="Trash Icon" width="50" height="50" /> 
-          Trash
-        </router-link>
+          <router-link to="/profile/trash" class="nav-link" style="color: #34495e;" active-class="router-link-active">
+            <i class="fas fa-trash animated-icon"></i> Trash
+          </router-link>
 
-        <router-link to="/profile/folders" class="nav-link">
-          <img src="@/assets/folders.gif" class="animated-icon" alt="Folders Icon" width="50" height="50" />
-          Folders
-        </router-link>
+          <router-link to="/profile/folders" class="nav-link" style="color: #0a1e78;" active-class="router-link-active">
+            <i class="fas fa-folder animated-icon"></i> Folders
+          </router-link>
 
-        <router-link to="/logout" class="nav-link">
-          <img src="@/assets/logout.png" class="animated-icon" alt="Logout Icon" width="50" height="50"  /> Logout
-        </router-link>
+          <router-link to="/logout" class="nav-link" style="color: #e74c3c;" active-class="router-link-active">
+            <i class="fas fa-sign-out-alt animated-icon"></i> Logout
+          </router-link>
       </nav>
+
       
     </aside>
     <main class="main-content">
@@ -144,15 +133,14 @@ const collapseSidebar = () => {
   height: 20px;
 }
 
-.nav-links .nav-link:hover {
+.nav-links .nav-link.router-link-active {
   background-color: #ddd;
 }
 
-.nav-links .nav-link:hover .animated-icon {
+.nav-links .nav-link.router-link-active .animated-icon {
   transform: scale(1.2);
   animation: pulse 1s infinite;
 }
-
 @keyframes pulse {
   0% {
     transform: scale(1);
