@@ -2,6 +2,7 @@ package com.example.mailServer.mail.controller;
 
 import com.example.mailServer.mail.services.AuthoriticationProxy.Authoritication;
 import com.example.mailServer.mail.services.DataCache.Data;
+import com.example.mailServer.mail.services.ServiceUserFacade;
 import com.example.mailServer.mail.services.User;
 import com.example.mailServer.mail.services.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,10 @@ import java.util.ArrayList;
 @CrossOrigin("*")
 @RequestMapping("/mail")
 public class control {
+//    @Autowired
+//    private Data d = Data.getInstance() ;;
     @Autowired
-    private Data d = Data.getInstance() ;;
+    private ServiceUserFacade s ;
 
 
     public control() throws IOException {
@@ -27,8 +30,7 @@ public class control {
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody UserDTO u ){
        try{
-           Authoritication a =new Authoritication() ;
-           String status =  a.signup(u) ;
+           String status = s.signup(u) ;
             if(status.equals("Signed up successfully"))
                 return ResponseEntity.ok(status);
             else
@@ -40,8 +42,8 @@ public class control {
     @PostMapping("/signin")
     public ResponseEntity<String> signin(@RequestBody UserDTO u ){
         try{
-            Authoritication a =new Authoritication() ;
-            String status =  a.signin(u) ;
+
+            String status = s.signin(u) ;
             if(status.equals("Signed in successfully"))
                 return ResponseEntity.ok(status);
             else
@@ -52,12 +54,12 @@ public class control {
     }
 
 
-    @GetMapping("/load")
-    public ResponseEntity<ArrayList<User>> load () throws IOException {
-       // System.out.println("loaaaad");
-     //   System.out.println(d.loadToJson().get(0).getUsername());
-        if(d.loadToJson()!=null)
-            return ResponseEntity.ok(d.loadToJson());
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-    }
+//    @GetMapping("/load")
+//    public ResponseEntity<ArrayList<User>> load () throws IOException {
+//       // System.out.println("loaaaad");
+//     //   System.out.println(d.loadToJson().get(0).getUsername());
+//        if(d.loadToJson()!=null)
+//            return ResponseEntity.ok(d.loadToJson());
+//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+//    }
 }

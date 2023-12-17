@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-@Service
+//@Service
 public class Data {
     private static Data data = null ;
     private static ArrayList<User> users = new ArrayList<User>() ; ;
@@ -26,16 +26,16 @@ public class Data {
     public static void setUsers(ArrayList<User> users) {
         Data.users = users;
     }
-    public void add(User user) throws IOException {
+    public User add(User user) throws IOException {
         users.add(user) ;
 //        System.out.println(users.get(0).getUsername());
         saveToJson();
-        return ;
+        return user ;
     }
 
     public void saveToJson() throws IOException {
         try {
-            String path ="C:\\Users\\M\\Desktop\\anypath\\users.json";
+            String path ="E:\\material\\2nd year\\1st semester\\programming2\\mail server\\backend\\Email-Server\\users.json";
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(new File(path), users);
             loadToJson();
@@ -45,7 +45,7 @@ public class Data {
     }
     public ArrayList<User> loadToJson() throws IOException {
         try {
-            String path ="C:\\Users\\M\\Desktop\\anypath\\users.json";
+            String path ="E:\\material\\2nd year\\1st semester\\programming2\\mail server\\backend\\Email-Server\\users.json";
             ObjectMapper mapper = new ObjectMapper();
 
             setUsers(mapper.readValue(new File(path), new TypeReference<ArrayList<User>>(){}));

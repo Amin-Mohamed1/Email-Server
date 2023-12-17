@@ -11,7 +11,7 @@ public class Authoritication {
     Data d = Data.getInstance() ;
 
     public Authoritication() throws IOException {
-        d.loadToJson() ;
+
     }
 
     public String signup(UserDTO u ) throws IOException, NoSuchAlgorithmException {
@@ -24,7 +24,12 @@ public class Authoritication {
         if(u.password.length()<8)
             return "Password must be at least 8 digits and characters" ;
         u.password = Encryption.getSHA(u.password) ;
-        d.add(new User(u));
+
+        User user= d.add(new User(u));
+        user.addFolder("inbox");
+        user.addFolder("draft");
+        user.addFolder("sent");
+        user.addFolder("trash");
         return "Signed up successfully";
     }
 
