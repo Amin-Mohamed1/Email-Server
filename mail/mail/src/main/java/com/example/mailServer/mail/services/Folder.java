@@ -32,4 +32,11 @@ public class Folder {
         this.name = name;
     }
 
+    @Override
+    public String toString() {
+        return "Folder{" +
+                "emails=" + emails +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

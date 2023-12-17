@@ -26,4 +26,12 @@ public class Contact {
     public void setName(String name) {
         this.name = name;
     }
+
+    @Override
+    public String toString() {
+        return "Contact{" +
+                "emailaccount='" + emailaccount + '\'' +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

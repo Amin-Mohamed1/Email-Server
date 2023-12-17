@@ -30,6 +30,9 @@ public class Authoritication {
         user.addFolder("draft");
         user.addFolder("sent");
         user.addFolder("trash");
+        //System.out.println( user.toString() );
+        System.out.println(Data.getUsers().get(0).toString());
+        d.saveToJson();
         return "Signed up successfully";
     }
 

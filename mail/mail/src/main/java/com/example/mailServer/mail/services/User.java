@@ -86,13 +86,23 @@ public class User {
     public void addFolder(String name ){
         folders.add(new Folder(new ArrayList<Email>(),name)) ;
         System.out.println(this.folders.get(this.folders.size()-1).getName());
-
-
-
         return ;
     }
     public void addContact(String name , String email){
         contacts.add(new Contact(email ,name)) ;
 
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "username='" + username + '\'' +
+                ", emailaccount='" + emailaccount + '\'' +
+                ", password='" + password + '\'' +
+                ", birth='" + birth + '\'' +
+                ", folders=" + folders +
+                ", contacts=" + contacts +
+                ", idMessage=" + idMessage +
+                '}';
     }
 }

@@ -30,7 +30,7 @@ public class Data {
         users.add(user) ;
 //        System.out.println(users.get(0).getUsername());
         saveToJson();
-        return user ;
+        return users.get(users.size()-1) ;
     }
 
     public void saveToJson() throws IOException {
