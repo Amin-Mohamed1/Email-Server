@@ -2,7 +2,7 @@ package com.example.mailServer.mail.services;
 
 import java.util.List;
 
-public class EmailBuilder extends Email{
+public class EmailBuilder{
     //required params
     private String sender;
     private List<String> reciever;
