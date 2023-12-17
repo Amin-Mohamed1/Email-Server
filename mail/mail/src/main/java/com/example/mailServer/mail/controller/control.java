@@ -20,6 +20,7 @@ public class control {
     @Autowired
     private Data d = Data.getInstance() ;;
 
+
     public control() throws IOException {
     }
 
@@ -36,6 +37,21 @@ public class control {
            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null) ;
        }
     }
+    @PostMapping("/signin")
+    public ResponseEntity<String> signin(@RequestBody UserDTO u ){
+        try{
+            Authoritication a =new Authoritication() ;
+            String status =  a.signin(u) ;
+            if(status.equals("Signed in successfully"))
+                return ResponseEntity.ok(status);
+            else
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(status);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null) ;
+        }
+    }
+
+
     @GetMapping("/load")
     public ResponseEntity<ArrayList<User>> load () throws IOException {
        // System.out.println("loaaaad");
