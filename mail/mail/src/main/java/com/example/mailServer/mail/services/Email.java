@@ -7,13 +7,14 @@ public class Email {
     private String sender;
     private List<String> reciever;
 
-    //optional params
+    private String dateTime;
     private String id;
+
+    //optional params
     private String subject;
     private String body;
     private List<String> attatchments;
     private String priority;
-    private String dateTime;
 
     public Email(){}
 
@@ -26,6 +27,34 @@ public class Email {
         this.attatchments = builder.getAttatchments();
         this.priority = builder.getPriority();
         this.dateTime = builder.getDateTime();
+    }
+
+    public void setReciever(List<String> reciever) {
+        this.reciever = reciever;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public void setBody(String body) {
+        this.body = body;
+    }
+
+    public void setAttatchments(List<String> attatchments) {
+        this.attatchments = attatchments;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public void setDateTime(String dateTime) {
+        this.dateTime = dateTime;
     }
 
     public String getSender() {

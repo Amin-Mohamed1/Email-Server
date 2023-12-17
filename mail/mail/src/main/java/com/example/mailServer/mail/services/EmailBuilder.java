@@ -16,9 +16,11 @@ public class EmailBuilder{
     private String dateTime;
 
     public EmailBuilder(){}
-    public EmailBuilder(String sender, List<String> reciever){
+    public EmailBuilder(String sender, List<String> reciever, String id, String dateTime){
         this.sender = sender;
         this.reciever = reciever;
+        this.id = id;
+        this.dateTime = dateTime;
     }
 
     public String getSender() {
@@ -53,11 +55,6 @@ public class EmailBuilder{
         return dateTime;
     }
 
-    public EmailBuilder setId(String id) {
-        this.id = id;
-        return this;
-    }
-
     public EmailBuilder setSubject(String subject) {
         this.subject = subject;
         return this;
@@ -78,10 +75,6 @@ public class EmailBuilder{
         return this;
     }
 
-    public EmailBuilder setDateTime(String dateTime) {
-        this.dateTime = dateTime;
-        return this;
-    }
 
     public Email build(){
         return new Email(this);
