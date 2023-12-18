@@ -2,6 +2,8 @@ package com.example.mailServer.mail.services;
 
 import com.example.mailServer.mail.services.AuthoriticationProxy.Authoritication;
 import com.example.mailServer.mail.services.DataCache.Data;
+import com.example.mailServer.mail.services.USER.IUser;
+import com.example.mailServer.mail.services.USER.UserDTO;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -13,15 +15,14 @@ public class ServiceUserFacade {
     public ServiceUserFacade() throws IOException {
         d.loadToJson() ;
     }
-    public String signup(UserDTO u) throws IOException, NoSuchAlgorithmException {
+    public IUser signup(UserDTO u) throws IOException, NoSuchAlgorithmException {
         Authoritication a =new Authoritication() ;
-        String status =  a.signup(u) ;
-        return status ;
+        return a.signup(u)  ;
     }
-    public String signin(UserDTO u) throws IOException, NoSuchAlgorithmException {
+    public IUser signin(UserDTO u) throws IOException, NoSuchAlgorithmException {
         Authoritication a =new Authoritication() ;
-        String status =  a.signin(u) ;
-        return status ;
+        ;
+        return a.signin(u) ;
     }
 
 }

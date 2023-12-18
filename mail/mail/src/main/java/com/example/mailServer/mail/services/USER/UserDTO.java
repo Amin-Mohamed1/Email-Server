@@ -1,4 +1,4 @@
-package com.example.mailServer.mail.services;
+package com.example.mailServer.mail.services.USER;
 
 public class UserDTO {
     public String username ;

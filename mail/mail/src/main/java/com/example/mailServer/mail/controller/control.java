@@ -1,10 +1,10 @@
 package com.example.mailServer.mail.controller;
 
-import com.example.mailServer.mail.services.AuthoriticationProxy.Authoritication;
-import com.example.mailServer.mail.services.DataCache.Data;
 import com.example.mailServer.mail.services.ServiceUserFacade;
-import com.example.mailServer.mail.services.User;
-import com.example.mailServer.mail.services.UserDTO;
+import com.example.mailServer.mail.services.USER.IUser;
+import com.example.mailServer.mail.services.USER.NotUser;
+import com.example.mailServer.mail.services.USER.User;
+import com.example.mailServer.mail.services.USER.UserDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 @Controller
 @CrossOrigin("*")
@@ -28,10 +27,10 @@ public class control {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody UserDTO u ){
+    public ResponseEntity<IUser> signup(@RequestBody UserDTO u ){
        try{
-           String status = s.signup(u) ;
-            if(status.equals("Signed up successfully"))
+           IUser status = s.signup(u) ;
+            if(status instanceof User)
                 return ResponseEntity.ok(status);
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(status);
@@ -40,11 +39,11 @@ public class control {
        }
     }
     @PostMapping("/signin")
-    public ResponseEntity<String> signin(@RequestBody UserDTO u ){
+    public ResponseEntity<IUser> signin(@RequestBody UserDTO u ){
         try{
 
-            String status = s.signin(u) ;
-            if(status.equals("Signed in successfully"))
+            IUser status = s.signin(u) ;
+            if(status instanceof User)
                 return ResponseEntity.ok(status);
             else
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(status);

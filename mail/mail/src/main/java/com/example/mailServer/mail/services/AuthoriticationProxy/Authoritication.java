@@ -1,8 +1,11 @@
 package com.example.mailServer.mail.services.AuthoriticationProxy;
 
 import com.example.mailServer.mail.services.DataCache.Data;
-import com.example.mailServer.mail.services.User;
-import com.example.mailServer.mail.services.UserDTO;
+import com.example.mailServer.mail.services.DataCache.DataHelper;
+import com.example.mailServer.mail.services.USER.IUser;
+import com.example.mailServer.mail.services.USER.NotUser;
+import com.example.mailServer.mail.services.USER.User;
+import com.example.mailServer.mail.services.USER.UserDTO;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -14,15 +17,15 @@ public class Authoritication {
 
     }
 
-    public String signup(UserDTO u ) throws IOException, NoSuchAlgorithmException {
+    public IUser signup(UserDTO u ) throws IOException, NoSuchAlgorithmException {
         if(checkEmail(u))
-            return "Email has already exist" ;
+            return new NotUser("Email has already exist");
         if(checkUsername(u))
-            return "Username has already exist" ;
+            return new NotUser("Username has already exist") ;
         if(!(u.emailaccount.endsWith("@gmail.com")||u.emailaccount.endsWith("@alexu.edu.eg")))
-            return "Invalid domain of email" ;
+            return new NotUser("Invalid domain of email") ;
         if(u.password.length()<8)
-            return "Password must be at least 8 digits and characters" ;
+            return new NotUser("Password must be at least 8 digits and characters") ;
         u.password = Encryption.getSHA(u.password) ;
 
         User user= d.add(new User(u));
@@ -31,19 +34,19 @@ public class Authoritication {
         user.addFolder("sent");
         user.addFolder("trash");
         //System.out.println( user.toString() );
-        System.out.println(Data.getUsers().get(0).toString());
+        // System.out.println(Data.getUsers().get(0).toString());
         d.saveToJson();
-        return "Signed up successfully";
+        return user;
     }
 
-    public String signin (UserDTO u ) throws IOException, NoSuchAlgorithmException {
+    public IUser signin (UserDTO u ) throws IOException, NoSuchAlgorithmException {
        // System.out.println(u.emailaccount+"  " + u.password);
 
         if(!checkEmail(u))
-            return  "Wrong email , check email" ;
+            return  new NotUser("Wrong email , check email") ;
         if(!checkPassword(u))
-            return "wrong password" ;
-        return "Signed in successfully" ;
+            return new NotUser("wrong password") ;
+        return DataHelper.getUserByAccount(u.emailaccount);
     }
 
     public boolean checkPassword(UserDTO user) throws NoSuchAlgorithmException {

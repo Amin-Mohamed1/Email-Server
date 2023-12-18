@@ -1,14 +1,15 @@
-package com.example.mailServer.mail.services;
+package com.example.mailServer.mail.services.USER;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import com.example.mailServer.mail.services.Contact;
+import com.example.mailServer.mail.services.Email;
+import com.example.mailServer.mail.services.Folder;
 
 import java.util.ArrayList;
 
 //@JsonTypeInfo(use = JsonTypeInfo.Id.NAME,include = JsonTypeInfo.As.PROPERTY, visible = true)
 //@JsonIgnoreProperties(value = "attributes",ignoreUnknown = true)
 
-public class User {
+public class User implements IUser{
     // primary data for user
     private String username ;
     private String emailaccount ;
@@ -17,6 +18,8 @@ public class User {
     private ArrayList<Folder> folders;
     private ArrayList<Contact> contacts ;
     private int idMessage ;
+
+
     public User(UserDTO u){
         this.birth = u.birth ;
         this.emailaccount = u.emailaccount ;
@@ -24,7 +27,7 @@ public class User {
         this.username = u.username ;
         this.folders = new ArrayList<>() ;
         this.contacts = new ArrayList<>() ;
-        idMessage = 0 ;
+        this.idMessage = 0 ;
     }
     public User(){}
 
@@ -85,13 +88,15 @@ public class User {
     }
     public void addFolder(String name ){
         folders.add(new Folder(new ArrayList<Email>(),name)) ;
-        System.out.println(this.folders.get(this.folders.size()-1).getName());
+        //System.out.println(this.folders.get(this.folders.size()-1).getName());
         return ;
     }
     public void addContact(String name , String email){
         contacts.add(new Contact(email ,name)) ;
 
     }
+
+
 
     @Override
     public String toString() {

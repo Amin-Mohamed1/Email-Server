@@ -1,9 +1,8 @@
 package com.example.mailServer.mail.services.DataCache;
 
-import com.example.mailServer.mail.services.User;
+import com.example.mailServer.mail.services.USER.User;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
