@@ -2,7 +2,7 @@
   <div>
     <h2 class="inbox-title">Inbox</h2>
     <transition-group name="fade" mode="out-in">
-      <div v-for="email in emails" :key="email.id" class="email-item">
+      <div v-for="email in displayedEmails" :key="email.id" class="email-item" @click="expandBody(email)">
         <div class="info">
           <div class="sender">{{ email.sender }}</div>
           <div class="date-time">{{ email.dateTime }}</div>
@@ -12,11 +12,12 @@
           <div v-if="!email.expanded" class="truncated-body">
             {{ truncateBody(email.body) }}
             <span v-if="shouldTruncate(email.body)">
-              ... <span @click="expandBody(email)">See more</span>
+              ... <span @click.stop="expandBody(email)">See more</span>
             </span>
           </div>
           <div v-else>
             {{ email.body }}
+            <span @click.stop="expandBody(email)">See less</span>
           </div>
           <div v-if="hasAttachment(email.attachments)" class="attachment-section">
             <strong class="attachment-label">Attachments:</strong>
@@ -30,53 +31,94 @@
         </div>
         <div class="meta">
           <div class="priority">Priority: {{ email.priority }}</div>
-          <button @click="deleteEmail(email.id)" class="delete-btn">Delete</button>
+          <button @click.stop="deleteEmail(email.id)" class="delete-btn">Delete</button>
         </div>
       </div>
     </transition-group>
+    <div class="pagination">
+      <button @click="changePage('prev')" :disabled="currentPage === 1">Prev</button>
+      <span>{{ currentPage }}</span>
+      <button @click="changePage('next')" :disabled="currentPage === totalPages">Next</button>
+    </div>
   </div>
 </template>
 
+<script setup>
+import { ref, onMounted, computed } from 'vue';
+import axios from 'axios';
 
+const currentUserEmail = 'user@gmail.com';
+const emailsPerPage = 5;
 
+const fetchEmails = async () => {
+  try {
+    const response = await axios.get(`http://localhost/emails/${currentUserEmail}`);
+    emails.value = response.data;
+  } catch (error) {
+    console.error('Error fetching emails:', error);
+  }
+};
 
-  <script setup>
-  import { ref } from 'vue';
-  
-  const emails = ref([
-    { id: 1, sender: 'Albert.Einstein@gmail.com', subject: 'Meeting Tomorrow', body: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.', attachments: [{ name: 'project_plan.png', type: 'png' }, { name: 'meeting_notes.docx', type: 'docx' }], priority: 'Medium', dateTime: '2023-01-02 2:30 PM'},
-    { id: 2, sender: 'Robert.Oppenheimer@gmail.com', subject: 'Presentation Feedback', body: 'Your presentation was excellent!', dateTime: '2023-01-02 2:30 PM', priority: 'Medium', attachments: [{ name: 'feedback.pdf', type: 'pdf' }, { name: 'slides.pdf', type: 'pdf' }] },
-    { id: 3, sender: 'Neils.Bohr@gmail.com', subject: 'Meeting Tomorrow', body: 'Hi, let\'s discuss the project tomorrow.', dateTime: '2023-01-01 10:00 AM', priority: 'High', attachments: [] },
-    { id: 4, sender: 'Lionel.Messi@gmail.com', subject: 'Presentation Feedback', body: 'Your presentation was excellent!', dateTime: '2023-01-02 2:30 PM', priority: 'Medium', attachments: [] },
-  ]);
-  
-  const deleteEmail = (id) => {
-    emails.value = emails.value.filter(email => email.id !== id);
-  };
-  
-  const shouldTruncate = (body) => body.length > 120; // Adjust the limit as needed
-  
-  const truncateBody = (body) => shouldTruncate(body) ? body.slice(0, 120) : body;
-  
-  const expandBody = (email) => {
-    email.expanded = true;
-  };
-  
-  const hasAttachment = (attachments) => attachments.length > 0;
-  
-  const getAttachmentIcon = (type) => {
-    if (type.toLowerCase() === 'pdf') {
-      return '📄'; // PDF icon
-    } else if (type.toLowerCase() === 'docx') {
-      return '📃'; // DOCX icon
-    } else if (type.toLowerCase() === 'jpg' || type.toLowerCase() === 'jpeg' || type.toLowerCase() === 'png') {
-      return '📷'; // Image icon
-    } else {
-      return '📎'; // Default attachment icon
-    }
-  };
+const emails = ref([
+  { id: 1, sender: 'Albert.Einstein@gmail.com', subject: 'Meeting Tomorrow', body: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. ...', attachments: [{ name: 'project_plan.png', type: 'png' }, { name: 'meeting_notes.docx', type: 'docx' }], priority: 'Medium', dateTime: '2023-01-02 2:30 PM'},
+  { id: 2, sender: 'Robert.Oppenheimer@gmail.com', subject: 'Presentation Feedback', body: 'Your presentation was excellent!', dateTime: '2023-01-02 2:30 PM', priority: 'Medium', attachments: [{ name: 'feedback.pdf', type: 'pdf' }, { name: 'slides.pdf', type: 'pdf' }] },
+  { id: 3, sender: 'Neils.Bohr@gmail.com', subject: 'Meeting Tomorrow', body: 'Hi, let\'s discuss the project tomorrow.', dateTime: '2023-01-01 10:00 AM', priority: 'High', attachments: [] },
+  { id: 4, sender: 'Lionel.Messi@gmail.com', subject: 'Presentation Feedback', body: 'Your presentation was excellent!', dateTime: '2023-01-02 2:30 PM', priority: 'Medium', attachments: [] },
+  { id: 1, sender: 'Albert.Einstein@gmail.com', subject: 'Meeting Tomorrow', body: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. ...', attachments: [{ name: 'project_plan.png', type: 'png' }, { name: 'meeting_notes.docx', type: 'docx' }], priority: 'Medium', dateTime: '2023-01-02 2:30 PM'},
+  { id: 2, sender: 'Robert.Oppenheimer@gmail.com', subject: 'Presentation Feedback', body: 'Your presentation was excellent!', dateTime: '2023-01-02 2:30 PM', priority: 'Medium', attachments: [{ name: 'feedback.pdf', type: 'pdf' }, { name: 'slides.pdf', type: 'pdf' }] },
+  { id: 3, sender: 'Neils.Bohr@gmail.com', subject: 'Meeting Tomorrow', body: 'Hi, let\'s discuss the project tomorrow.', dateTime: '2023-01-01 10:00 AM', priority: 'High', attachments: [] },
+  { id: 4, sender: 'Lionel.Messi@gmail.com', subject: 'Presentation Feedback', body: 'Your presentation was excellent!', dateTime: '2023-01-02 2:30 PM', priority: 'Medium', attachments: [] },
+]);
 
-  </script>
+onMounted(() => {
+  fetchEmails();
+});
+
+const currentPage = ref(1);
+
+const totalPages = computed(() => Math.ceil(emails.value.length / emailsPerPage));
+
+const displayedEmails = computed(() => {
+  const startIndex = (currentPage.value - 1) * emailsPerPage;
+  const endIndex = startIndex + emailsPerPage;
+  return emails.value.slice(startIndex, endIndex);
+});
+
+const deleteEmail = (id) => {
+  emails.value = emails.value.filter(email => email.id !== id);
+};
+
+const shouldTruncate = (body) => body.length > 120;
+
+const truncateBody = (body) => shouldTruncate(body) ? body.slice(0, 120) : body;
+
+const expandBody = (email) => {
+  email.expanded = !email.expanded;
+};
+
+const hasAttachment = (attachments) => attachments.length > 0;
+
+const getAttachmentIcon = (type) => {
+  if (type.toLowerCase() === 'pdf') {
+    return '📄'; // PDF icon
+  } else if (type.toLowerCase() === 'docx') {
+    return '📃'; // DOCX icon
+  } else if (type.toLowerCase() === 'jpg' || type.toLowerCase() === 'jpeg' || type.toLowerCase() === 'png') {
+    return '📷'; // Image icon
+  } else {
+    return '📎'; // Default attachment icon
+  }
+};
+
+const changePage = (direction) => {
+  if (direction === 'prev' && currentPage.value > 1) {
+    currentPage.value -= 1;
+  } else if (direction === 'next' && currentPage.value < totalPages.value) {
+    currentPage.value += 1;
+  }
+};
+</script>
+
 
 <style scoped>
   .inbox-title {
@@ -182,5 +224,24 @@ ul {
   list-style: none;
   padding: 0;
 }
+.pagination {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .pagination button {
+    margin: 0 5px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    background-color: #fff;
+    cursor: pointer;
+  }
+
+  .pagination button:disabled {
+    cursor: not-allowed;
+    background-color: #eee;
+  }
   </style>
   
