@@ -49,7 +49,6 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-
 const router = useRouter();
 
 let username = ref('');
@@ -58,16 +57,22 @@ let password = ref('');
 let confirmPassword = ref('');
 let birth = ref('');
 let acceptTerms = ref(false);
+const folders = ref([
+  { "emails": [], "name": "inbox" },
+  { "emails": [], "name": "draft" },
+  { "emails": [], "name": "sent" },
+  { "emails": [], "name": "trash" }
+]);
+const contacts = ref([]);
+const idMessage = ref(1);
+
 
 const validateSignup = async () => {
   if (password.value !== confirmPassword.value) {
-    console.log("password " + password.value);
-    console.log("confirmPassword " + confirmPassword.value);
     alert('Passwords do not match.');
     return;
   }
   const validBirthdate = isValidBirthdate(birth.value);
-  console.log("isValidBirthdate " + validBirthdate);
   if (!validBirthdate) {
     alert('Invalid birth date. Please enter a valid birth date above 18 years.');
     return;
@@ -76,6 +81,7 @@ const validateSignup = async () => {
     alert('Please accept the terms and conditions.');
     return;
   }
+
   try {
     const response = await fetch('http://localhost:8081/mail/signup', {
       method: 'POST',
@@ -89,18 +95,28 @@ const validateSignup = async () => {
         birth: birth.value,
       }),
     });
+
     if (!response.ok) {
       const errorMessage = await response.text() || 'Unknown error';
       alert(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
       return;
     }
-    const responseData = await response.text();
+
+    const responseData = await response.json();
     console.log(responseData);
     const message = responseData;
-    if (message === 'Signed up successfully') {
+    if (message.username !== undefined) {
+      document.cookie = `username=${username.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      document.cookie = `email=${emailaccount.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      document.cookie = `password=${password.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      document.cookie = `birth=${birth.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      document.cookie = `folders=${JSON.stringify(folders.value)}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      document.cookie = `contacts=${JSON.stringify(contacts.value)}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      document.cookie = `idMessage=${idMessage.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+        
       alert('Signup successful!');
       goToProfilePage();
-    } else {
+    } else {  
       alert(`Signup failed: ${message}`);
     }
   } catch (error) {
@@ -121,9 +137,13 @@ const isValidBirthdate = (selectedDate) => {
     return age >= 18;
 };
 
-const goToProfilePage = () => {
-  router.push('/profile');
+const goToProfilePage = (username, email, folders, contacts, idMessage) => {
+  router.push({
+    name: 'profile',
+    params: { username, email, folders, contacts, idMessage },
+  });
 };
+
 
 </script>
 <style scoped>
