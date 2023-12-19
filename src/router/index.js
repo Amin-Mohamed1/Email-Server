@@ -15,7 +15,12 @@ const routes = [
   { path: '/home', component: HomeComponent },
   { path: '/login', component: LoginComponent },
   { path: '/signup', component: SignUpComponent },
-  { path: '/profile', component: ProfileComponentVue, children: [
+  { path: '/profile',name: 'profile', component: () => import('@/components/ProfileComponent.vue'), props: route => ({
+    username: route.params.username, email: route.params.email,
+    folders: route.params.folders,
+    contacts: route.params.contacts,
+    idMessage: route.params.idMessage,
+  }), children: [
     { path: 'inbox', components: { default: InboxComponentVue } },
     { path: 'compose', components: { default: ComposeComponentVue } },
     { path: 'contact', components: { default: ContactComponentVue } },
