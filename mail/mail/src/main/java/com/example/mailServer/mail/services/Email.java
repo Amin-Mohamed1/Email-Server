@@ -9,7 +9,7 @@ public class Email {
     private ArrayList<String> recievers;
 
     private String dateTime;
-    private String id;
+    private int id;
 
     //optional params
     private String subject;
@@ -34,7 +34,7 @@ public class Email {
         this.recievers = recievers;
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -67,7 +67,7 @@ public class Email {
         return recievers;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 

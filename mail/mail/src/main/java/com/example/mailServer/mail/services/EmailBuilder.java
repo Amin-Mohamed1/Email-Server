@@ -9,7 +9,7 @@ public class EmailBuilder{
     private ArrayList<String> recievers;
 
     //optional params
-    protected String id;
+    protected int id;
     private String subject;
     private String body;
     private List<String> attatchments;
@@ -17,7 +17,7 @@ public class EmailBuilder{
     private String dateTime;
 
     public EmailBuilder(){}
-    public EmailBuilder(String sender, ArrayList<String> recievers, String id, String dateTime){
+    public EmailBuilder(String sender, ArrayList<String> recievers, int id, String dateTime){
         this.sender = sender;
         this.recievers = recievers;
         this.id = id;
@@ -32,7 +32,7 @@ public class EmailBuilder{
         return recievers;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 
