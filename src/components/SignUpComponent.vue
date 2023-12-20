@@ -111,6 +111,7 @@ const validateSignup = async () => {
       document.cookie = `password=${password.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
       document.cookie = `birth=${birth.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
       document.cookie = `folders=${JSON.stringify(folders.value)}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      contacts.value = responseData.contacts || [];
       document.cookie = `contacts=${JSON.stringify(contacts.value)}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
       document.cookie = `idMessage=${idMessage.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
         
