@@ -41,6 +41,8 @@
       <button @click="changePage('next')" :disabled="currentPage === totalPages">Next</button>
     </div>
   </div>
+  {{ props.profileContactInfo }}
+  {{ props.Inboxemails }}
 </template>
 
 <script setup>
@@ -49,6 +51,9 @@ import axios from 'axios';
 
 const currentUserEmail = 'user@gmail.com';
 const emailsPerPage = 5;
+import { defineProps } from 'vue';
+
+const props = defineProps(['profileContactInfo','Inboxemails']);
 
 const fetchEmails = async () => {
   try {
@@ -75,29 +80,21 @@ onMounted(() => {
 });
 
 const currentPage = ref(1);
-
 const totalPages = computed(() => Math.ceil(emails.value.length / emailsPerPage));
-
 const displayedEmails = computed(() => {
   const startIndex = (currentPage.value - 1) * emailsPerPage;
   const endIndex = startIndex + emailsPerPage;
   return emails.value.slice(startIndex, endIndex);
 });
-
 const deleteEmail = (id) => {
   emails.value = emails.value.filter(email => email.id !== id);
 };
-
 const shouldTruncate = (body) => body.length > 120;
-
 const truncateBody = (body) => shouldTruncate(body) ? body.slice(0, 120) : body;
-
 const expandBody = (email) => {
   email.expanded = !email.expanded;
 };
-
 const hasAttachment = (attachments) => attachments.length > 0;
-
 const getAttachmentIcon = (type) => {
   if (type.toLowerCase() === 'pdf') {
     return '📄'; // PDF icon
@@ -109,7 +106,6 @@ const getAttachmentIcon = (type) => {
     return '📎'; // Default attachment icon
   }
 };
-
 const changePage = (direction) => {
   if (direction === 'prev' && currentPage.value > 1) {
     currentPage.value -= 1;
@@ -118,8 +114,6 @@ const changePage = (direction) => {
   }
 };
 </script>
-
-
 <style scoped>
   .inbox-title {
     font-size: 24px;
