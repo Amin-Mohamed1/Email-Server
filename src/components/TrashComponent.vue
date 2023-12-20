@@ -34,12 +34,14 @@
    </table>
      </transition-group>
      {{profileContactInfo}}
+     {{ Trashemails }}
 </template>
 <script>
 import { ref } from 'vue';
 export default {
   props: {
     profileContactInfo: String,
+    Trashemails: Array,
   },
 data() {
  return {
