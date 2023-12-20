@@ -12,10 +12,9 @@
           <i class="fas fa-user-circle"></i>
         </div>
         <div class="user-details">
-          <p class="username" @mouseover="highlightText" @mouseleave="resetText">{{ username }}</p>
+          <p class="username" @mouseover="highlightText" @mouseleave="resetText">{{ profileContactInfo }}</p>
         </div>
       </div>
-
 
       <nav class="nav-links">
           <router-link to="/profile/compose" class="nav-link" style="color: #3498db;" active-class="router-link-active">
@@ -57,22 +56,19 @@
       <div class = "utility" >
         <FilterComponent />
       </div>
-      <!--
-      <div>
-        <p>Folders:</p>
-        <ul>
-          <li v-for="(folder, index) in folders" :key="index">
-            {{ folder.name }} - Emails: {{ folder.emails?.length }}
-          </li>
-        </ul>
-        <p>Contacts: {{ contacts }}</p>
-        <p>ID Message: {{ idMessage }}</p>
-      </div>
-    -->
-      <router-view></router-view>
+      <router-view 
+        :profileContactInfo="profileContactInfo" 
+        :userList = "userList" 
+        :Inboxemails = "Inboxemails"
+        :Trashemails = "Trashemails"
+        :Draftemails = "Draftemails"
+        :Sentemails = "Sentemails">
+      </router-view>
     </main>
   </div>
 </template>
+
+
 
 <script setup>
 import { useRouter } from 'vue-router';
@@ -85,28 +81,62 @@ const email = ref('');
 const folders = ref([]); 
 const contacts = ref([]);
 const idMessage = ref(0);
+
+
+//sent info
+const profileContactInfo = ref('');
+const profileUsername = ref('');
+const profileIdmessage = ref(0);
+const userList = ref([]);
+const Inboxemails = ref([]);
+const Sentemails = ref([]);
+const Draftemails = ref([]);
+const Trashemails = ref([]);
+
 onMounted(() => {
   const cookies = document.cookie.split('; ');
   for (const cookie of cookies) {
     const [name, value] = cookie.split('=');
     if (name === 'username') {
       username.value = value;
+      profileUsername.value = value;
     } else if (name === 'email') {
       email.value = value;
+      profileContactInfo.value = value;
     }
     else if(name === 'idMessage'){
       idMessage.value = parseInt(value);
-      console.log(idMessage.value);
+      profileIdmessage.value = idMessage.value;
     }
      else if(name === 'folders'){
       folders.value = JSON.parse(value);
-      console.log(value);
+      const inboxFolder = folders.value.find(folder => folder.name === 'inbox');
+      if (inboxFolder) {
+        Inboxemails.value = inboxFolder.emails || [];
+        console.log("inbox " + Inboxemails.value);
+      }
+      const sentFolder = folders.value.find(folder => folder.name === 'sent');
+      if (sentFolder) {
+        Sentemails.value = sentFolder.emails || [];
+        console.log("sent " + Sentemails.value);
+      }
+      const draftFolder = folders.value.find(folder => folder.name === 'draft');
+      if (draftFolder) {
+        Draftemails.value = draftFolder.emails || [];
+        console.log("draft " + Draftemails.value);
+      }
+      const trashFolder = folders.value.find(folder => folder.name === 'trash');
+      if (trashFolder) {
+        Trashemails.value = trashFolder.emails || [];
+        console.log("trash " + Trashemails.value);
+      }
     }else if(name === 'contacts'){
       contacts.value = JSON.parse(value);
+      userList.value = JSON.parse(value);
+      console.log(contacts.value);
     }
   }
 });
-
 
 const expandSidebar = () => {
   isSidebarExpanded.value = true;
