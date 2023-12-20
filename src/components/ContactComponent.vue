@@ -73,8 +73,8 @@ const submitForm = () => {
 
 const sendAddedDataToBackend = async (addedUser) => {
   console.log('Sending added data to the backend:', addedUser);
-  const gmail = props.profileContactInfo;
-  console.log(gmail);
+  const gmail = profileContactInfo.value;
+  console.log(profileContactInfo.value);
   try {
     await fetch('http://localhost/add', {
       method: 'PUT',
@@ -147,7 +147,7 @@ const sendEditedDataToBackend = async (editedUser) => {
 
 const sendDeletedDataToBackend = async (deletedUser) => {
   console.log('Sending deleted data to the backend:', deletedUser);
-  const gmail = props.profileContactInfo;
+  const gmail = profileContactInfo.value;
   console.log(gmail);
   try {
     await fetch('http://localhost/delete', {
@@ -262,3 +262,5 @@ th {
   background-color: #f0f0f0;
 }
 </style>
+
+  
