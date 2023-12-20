@@ -35,10 +35,15 @@
       </div>
     </transition-group>
   </div>
+  {{ props.profileContactInfo }}
+  {{ props.Sentemails }}
 </template>
 
 <script setup>
+import { defineProps } from 'vue';
 import { ref } from 'vue';
+const props = defineProps(['profileContactInfo','Sentemails']);
+
 
 const sentEmails = ref([
   { id: 1, receiver: 'Albert.Einstein@gmail.com', subject: 'Meeting Tomorrow', body: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.', attachments: [{ name: 'project_plan.png', type: 'png' }, { name: 'meeting_notes.docx', type: 'docx' }], priority: 'Medium', dateTime: '2023-01-02 2:30 PM'},
