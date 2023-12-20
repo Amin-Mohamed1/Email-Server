@@ -14,12 +14,12 @@
           <div class="wrapper">
             
             <h2>Login</h2>
-            <form action="#" @submit.prevent="validateLogin">
+            <form @submit.prevent="validateLogin">
               <div class="input-box">
-                <input type="email" placeholder="Enter your email" required>
+                <input v-model="emailaccount" type="email" placeholder="Enter your email" required>
               </div>
               <div class="input-box">
-                <input type="password" placeholder="Enter your password" required>
+                   <input v-model="password" type="password" placeholder="Create password" required>
               </div>
               <div class="input-box button">
                 <input type="Submit" value="Login Now">
@@ -34,47 +34,78 @@
       </div>
   </div>
 </template>
-
 <script setup>
+
+
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
-
 const router = useRouter();
+const emailaccount = ref('');
+const password = ref('');
+const username =  ref('');
+const birth =  ref('');
+const folders = ref([
+      { "emails": [], "name": "inbox" },
+      { "emails": [], "name": "draft" },
+      { "emails": [], "name": "sent" },
+      { "emails": [], "name": "trash" }
+    ]);
+const contacts = ref([]);
+const idMessage = ref(0);
 
-let email = ref('');
-let password = ref('');
+const validateLogin = async () => {
+  try {
 
-const goToHomePage = () => {
-  router.push('/home');
-};
-
-const goToProfilePage = () => {
-  router.push('/profile');
-};
-
-const validateLogin = () => {
-  fetch('http://localhost/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email: email.value, password: password.value }),
-  })
-    .then(response => {
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-      return response.json();
-    })
-    .then(data => {
-      const token = data.token;
-      console.log(token);
-      goToProfilePage();
-    })
-    .catch(error => {
-      console.error('Login failed:', error);
+    console.log("email = " + emailaccount.value);
+    console.log("pass = " + password.value);
+    const response = await fetch('http://localhost:8081/mail/signin', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        emailaccount: emailaccount.value,
+        password: password.value,
+      }),
     });
+
+    if (!response.ok) {
+      const errorMessage = await response.text() || 'Unknown error';
+      alert(`HTTP error! Status: ${response.status}, Message: ${errorMessage}`);
+      return;
+    }
+
+    const responseData = await response.json();
+    console.log(responseData);
+    const message = responseData;
+    if (message.username !== undefined) {
+      document.cookie = `username=${username.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      document.cookie = `email=${emailaccount.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      document.cookie = `password=${password.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      document.cookie = `birth=${birth.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      document.cookie = `folders=${JSON.stringify(folders.value)}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      document.cookie = `contacts=${JSON.stringify(contacts.value)}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      document.cookie = `idMessage=${idMessage.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+
+      alert('SignIn successful!');
+      goToProfilePage();
+    } else {
+      alert(`SignIn failed: ${message}`);
+    }
+  } catch (error) {
+    console.error('SignIn failed:', error);
+    alert('An unexpected error occurred. Please try again.');
+  }
+  
+
 };
+const goToProfilePage = (username, email, folders, contacts, idMessage) => {
+  router.push({
+    name: 'profile',
+    params: { username, email, folders, contacts, idMessage },
+  });
+};
+
 </script>
 
 
@@ -139,7 +170,7 @@ body{
   align-items: center;
   justify-content: center;
   background: #4070f4;
-  animation: fadeIn 1s ease-in-out;
+  animation: fadeIn 1s ease-in-out; /* Fade-in animation */
 }
 .wrapper {
   position: relative;
@@ -234,6 +265,7 @@ form .text h3 a:hover{
   text-decoration: underline;
 }
 
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
