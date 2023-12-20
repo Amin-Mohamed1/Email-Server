@@ -1,11 +1,12 @@
 package com.example.mailServer.mail.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class EmailBuilder{
     //required params
     private String sender;
-    private List<String> reciever;
+    private ArrayList<String> recievers;
 
     //optional params
     protected String id;
@@ -16,9 +17,9 @@ public class EmailBuilder{
     private String dateTime;
 
     public EmailBuilder(){}
-    public EmailBuilder(String sender, List<String> reciever, String id, String dateTime){
+    public EmailBuilder(String sender, ArrayList<String> recievers, String id, String dateTime){
         this.sender = sender;
-        this.reciever = reciever;
+        this.recievers = recievers;
         this.id = id;
         this.dateTime = dateTime;
     }
@@ -27,8 +28,8 @@ public class EmailBuilder{
         return sender;
     }
 
-    public List<String> getReciever() {
-        return reciever;
+    public ArrayList<String> getRecievers() {
+        return recievers;
     }
 
     public String getId() {
