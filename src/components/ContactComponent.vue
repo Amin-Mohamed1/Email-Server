@@ -38,7 +38,7 @@
   </div>
 
   <p>Contact Information: {{ profileContactInfo  }}</p>
-  <p>Contact Information: {{ userList }}</p>
+  <p>Contact Information: {{ userList.length }}</p>
   
 </template>
 
@@ -50,9 +50,6 @@ const formData = ref({
   name: '',
   email: '',
 });
-
-const userList = ref([]);
-
 const nextId = ref(1); 
 
 const submitForm = () => {
@@ -120,7 +117,9 @@ const editContact = (id) => {
 };
 
 import { defineProps } from 'vue';
-const props = defineProps(['profileContactInfo'] , ['userList']);
+
+
+const props = defineProps(['profileContactInfo','userList']);
 const sendEditedDataToBackend = async (editedUser) => {
   console.log('Sending edited data to the backend:', editedUser);
   const gmail = props.profileContactInfo;
