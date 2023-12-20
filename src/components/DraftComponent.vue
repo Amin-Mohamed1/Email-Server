@@ -35,6 +35,9 @@
           </div>
         </div>
       </transition-group>
+      
+      {{ props.profileContactInfo }}
+      {{ props.Draftemails }}
     </div>
   </template>
   
@@ -44,7 +47,7 @@
   const draftEmails = ref([
     { id: 1, receiver: 'Albert.Einstein@gmail.com', subject: 'Meeting Tomorrow (Draft)', body: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.', attachments: [{ name: 'draft_notes.pdf', type: 'pdf' }], priority: 'Medium', dateTime: '2023-01-02 2:30 PM'},
   ]);
-  
+  const props = defineProps(['profileContactInfo','Draftemails']);
   const deleteDraftEmail = (id) => {
     draftEmails.value = draftEmails.value.filter(email => email.id !== id);
   };
