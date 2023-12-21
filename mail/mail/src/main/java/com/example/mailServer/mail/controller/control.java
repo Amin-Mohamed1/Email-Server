@@ -1,6 +1,7 @@
 package com.example.mailServer.mail.controller;
 
 import com.example.mailServer.mail.services.Contact;
+import com.example.mailServer.mail.services.Email;
 import com.example.mailServer.mail.services.EmailBuilder;
 import com.example.mailServer.mail.services.facade.ServiceEmailFacade;
 import com.example.mailServer.mail.services.facade.ServiceUserFacade;
@@ -18,8 +19,6 @@ import java.util.ArrayList;
 @CrossOrigin("*")
 @RequestMapping("/mail")
 public class control {
-    //    @Autowired
-//    private Data d = Data.getInstance() ;;
     @Autowired
     private ServiceUserFacade s;
     @Autowired
@@ -61,7 +60,6 @@ public class control {
             return ResponseEntity.ok(s.addContact(c, account));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-
         }
     }
 
@@ -71,7 +69,6 @@ public class control {
             return ResponseEntity.ok(s.editContact(c, account));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-
         }
     }
 
@@ -96,6 +93,19 @@ public class control {
         }
 
     }
+    @PostMapping("/filter/{account}/{type}/{value}")
+    public ResponseEntity<ArrayList<Email>> sendEmail(@PathVariable String account, @PathVariable String type,@PathVariable ArrayList<String> value) {
+        try{
+
+            return ResponseEntity.ok(se.filter(account , type , value));
+        }catch (Exception w ){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+
+    }
+
+
 
 
 }

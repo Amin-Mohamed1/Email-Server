@@ -4,6 +4,9 @@ import com.example.mailServer.mail.services.DataCache.Data;
 import com.example.mailServer.mail.services.DataCache.DataHelper;
 import com.example.mailServer.mail.services.Email;
 import com.example.mailServer.mail.services.EmailBuilder;
+import com.example.mailServer.mail.services.FilterEmail.CriteriaFactory;
+import com.example.mailServer.mail.services.FilterEmail.ICriteria;
+import com.example.mailServer.mail.services.Folder;
 import com.example.mailServer.mail.services.USER.Acceptable;
 import com.example.mailServer.mail.services.USER.User;
 import org.springframework.stereotype.Service;
@@ -39,5 +42,20 @@ public class ServiceEmailFacade {
             }
             d.saveToJson();
         }
+    }
+
+
+    public ArrayList<Email> filter (String account , String type ,ArrayList<String> criteriaValue){
+        User u = DataHelper.getUserByAccount(account) ;
+        ArrayList<Email> emails = new ArrayList<>() ;
+        for(Folder f : u.getFolders()){
+            for(Email e : f.getEmails()){
+                if(!emails.contains(e))
+                    emails.add(e) ;
+            }
+        }
+        CriteriaFactory factory = new CriteriaFactory() ;
+        ICriteria criteria = factory.getCriteria(type ,criteriaValue ) ;
+        return criteria.meetCriteria(emails) ;
     }
 }
