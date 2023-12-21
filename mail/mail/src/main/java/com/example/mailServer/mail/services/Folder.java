@@ -1,6 +1,6 @@
 package com.example.mailServer.mail.services;
 
-import com.example.mailServer.mail.services.Email;
+import com.example.mailServer.mail.services.Email.Email;
 
 import java.util.List;
 

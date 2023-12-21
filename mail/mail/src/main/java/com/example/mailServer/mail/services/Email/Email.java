@@ -1,4 +1,4 @@
-package com.example.mailServer.mail.services;
+package com.example.mailServer.mail.services.Email;
 
 import java.util.ArrayList;
 import java.util.List;

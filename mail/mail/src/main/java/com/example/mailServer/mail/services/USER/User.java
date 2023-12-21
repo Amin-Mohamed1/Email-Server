@@ -1,7 +1,7 @@
 package com.example.mailServer.mail.services.USER;
 
 import com.example.mailServer.mail.services.Contact;
-import com.example.mailServer.mail.services.Email;
+import com.example.mailServer.mail.services.Email.Email;
 import com.example.mailServer.mail.services.Folder;
 
 import java.util.ArrayList;

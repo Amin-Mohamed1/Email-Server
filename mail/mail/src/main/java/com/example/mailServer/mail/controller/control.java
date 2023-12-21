@@ -1,8 +1,8 @@
 package com.example.mailServer.mail.controller;
 
 import com.example.mailServer.mail.services.Contact;
-import com.example.mailServer.mail.services.Email;
-import com.example.mailServer.mail.services.EmailBuilder;
+import com.example.mailServer.mail.services.Email.Email;
+import com.example.mailServer.mail.services.Email.EmailBuilder;
 import com.example.mailServer.mail.services.facade.ServiceEmailFacade;
 import com.example.mailServer.mail.services.facade.ServiceUserFacade;
 import com.example.mailServer.mail.services.USER.*;
@@ -96,13 +96,19 @@ public class control {
     @PostMapping("/filter/{account}/{type}/{value}")
     public ResponseEntity<ArrayList<Email>> sendEmail(@PathVariable String account, @PathVariable String type,@PathVariable ArrayList<String> value) {
         try{
-
             return ResponseEntity.ok(se.filter(account , type , value));
         }catch (Exception w ){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-
         }
+    }
 
+    @PostMapping("/sortEmail/{account}/{type}/{sortingOrder}")
+    public ResponseEntity<ArrayList<Email>> sortEmail(@PathVariable String account, @PathVariable String type, @PathVariable boolean sortingOrder){
+        try{
+            return ResponseEntity.ok(se.sortEmail(account, type, sortingOrder));
+        }catch (Exception w ){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
 
