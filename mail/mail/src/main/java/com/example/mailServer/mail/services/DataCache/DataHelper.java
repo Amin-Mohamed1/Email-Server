@@ -4,6 +4,7 @@ import com.example.mailServer.mail.services.USER.User;
 
 public class DataHelper {
     public static User getUserByAccount(String account){
+        System.out.println(account);
         for(User u : Data.getUsers()){
             if(u.getEmailaccount().equals(account))
                 return u ;

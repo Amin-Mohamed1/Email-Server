@@ -6,7 +6,7 @@ import java.util.List;
 public class Email {
     //required params
     private String sender;
-    private ArrayList<String> recievers;
+    private ArrayList<String> recievers ;
 
     private String dateTime;
     private int id;
@@ -16,6 +16,15 @@ public class Email {
     private String body;
     private List<String> attatchments;
     private String priority;
+    private boolean isRead ;
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
+    }
 
     public Email(){}
 

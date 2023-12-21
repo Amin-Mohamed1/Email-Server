@@ -31,6 +31,9 @@ public class Folder {
     public void setName(String name) {
         this.name = name;
     }
+    public void addEmail(Email email){
+        this.emails.add(email) ;
+    }
 
     @Override
     public String toString() {

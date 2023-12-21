@@ -9,7 +9,7 @@ import java.util.ArrayList;
 //@JsonTypeInfo(use = JsonTypeInfo.Id.NAME,include = JsonTypeInfo.As.PROPERTY, visible = true)
 //@JsonIgnoreProperties(value = "attributes",ignoreUnknown = true)
 
-public class User implements IUser{
+public class User implements IUser , Acceptable{
     // primary data for user
     private String username ;
     private String emailaccount ;
@@ -91,10 +91,19 @@ public class User implements IUser{
         //System.out.println(this.folders.get(this.folders.size()-1).getName());
         return ;
     }
-    public void addContact(String name , String email){
-        contacts.add(new Contact(email ,name)) ;
+    public void addEmailToFolder(String name , Email email){
+        for(Folder f : getFolders()){
+            if(f.getName().equals(name)) {
+                f.addEmail(email);
+                return ;
+            }
+        }
+    }
+    public void addContact(String name , String email ,int id ){
+        contacts.add(new Contact(email ,name , id)) ;
 
     }
+
 
 
 

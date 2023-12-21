@@ -9,12 +9,21 @@ public class EmailBuilder{
     private ArrayList<String> recievers;
 
     //optional params
-    protected int id;
+    private int id;
     private String subject;
     private String body;
     private List<String> attatchments;
     private String priority;
     private String dateTime;
+    private boolean isRead ;
+
+    public boolean isRead() {
+        return isRead;
+    }
+
+    public void setRead(boolean read) {
+        isRead = read;
+    }
 
     public EmailBuilder(){}
     public EmailBuilder(String sender, ArrayList<String> recievers, int id, String dateTime){
