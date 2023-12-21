@@ -6,8 +6,11 @@ public class DataHelper {
     public static User getUserByAccount(String account){
         System.out.println(account);
         for(User u : Data.getUsers()){
-            if(u.getEmailaccount().equals(account))
-                return u ;
+            System.out.println(u.getEmailaccount());
+            if(u.getEmailaccount().equals(account)) {
+                System.out.println(u.getUsername()); ;
+                return u;
+            }
         }
         return null ;
     }

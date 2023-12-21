@@ -55,7 +55,7 @@ public class control {
         }
     }
 
-    @PutMapping("/addConatct/{account}")
+    @PutMapping("/addContact/{account}")
     public ResponseEntity<ArrayList<Contact>> addContact(@RequestBody Contact c, @PathVariable String account) {
         try {
             return ResponseEntity.ok(s.addContact(c, account));
@@ -65,7 +65,7 @@ public class control {
         }
     }
 
-    @PutMapping("/editConatct/{account}")
+    @PutMapping("/editContact/{account}")
     public ResponseEntity<ArrayList<Contact>> editContact(@RequestBody Contact c, @PathVariable String account) {
         try {
             return ResponseEntity.ok(s.editContact(c, account));

@@ -23,16 +23,19 @@ public class ServiceEmailFacade {
         User s = DataHelper.getUserByAccount(email.getSender()) ;
         if(s instanceof Acceptable){
             s.addEmailToFolder("sent" , email);
-            email.setRead(false);
-            for(String rs : email.getRecievers() ){
-                System.out.println(rs);
-                s = DataHelper.getUserByAccount(rs) ;
-                if(s != null)
-                    System.out.println(s.getUsername());
-//                if(s instanceof Acceptable){
-//                    s.addEmailToFolder("inbox" , email);
-//                    System.out.println("addddeddd");
-//                }
+//            System.out.println(email.getRecievers().get(0));
+//            String ema = email.getRecievers().get(0) ;
+//            System.out.println("bola hany");
+//            System.out.println(ema);
+//            if(ema.equals("rafy@gmail.com"))
+//                System.out.println("equallllllll");
+//            User r = DataHelper.getUserByAccount(ema) ;
+//            if (r != null) {
+//                r.addEmailToFolder("inbox",email);
+//            }
+            for(int i = 0 ; i < email.getRecievers().size() ; i++){
+                User r = DataHelper.getUserByAccount(email.getRecievers().get(i));
+                r.addEmailToFolder("inbox",email);
             }
             d.saveToJson();
         }

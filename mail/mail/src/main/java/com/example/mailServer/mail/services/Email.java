@@ -30,7 +30,7 @@ public class Email {
 
     public Email(EmailBuilder builder){
         this.sender = builder.getSender();
-        this.recievers = builder.getRecievers();
+        this.recievers = builder.getRecievers() ;
         this.id = builder.getId();
         this.subject = builder.getSubject();
         this.body = builder.getBody();
