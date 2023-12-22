@@ -4,11 +4,11 @@
       <h2>
         <i class="fas fa-envelope"></i> Compose Email
       </h2>
-      <div class="input-group to-group">
+        <div class="input-group to-group">
         <label for="to">
           <i class="fas fa-users"></i> To:
         </label>
-        <div class="to-info">
+        <div class="to-info" >
           <ul>
             <li v-for="(user, index) in to" :key="index">
               <i class="fas fa-user"></i> {{ user.email }}
@@ -18,7 +18,9 @@
             <i class="fas fa-plus"></i>
           </div>
         </div>
-      </div>
+        </div>
+      
+      
       <div class="input-group from-group">
         <label for="from">
           <i class="fas fa-user"></i> From:
@@ -55,14 +57,13 @@
       </div>
     </div>
 
-    <button @click="sendEmail" class="send-button">
-      <i class="fas fa-paper-plane"></i> Send Email
-    </button>
+    <button @click="submitForm" class="send-button">
+    <i class="fas fa-paper-plane"></i> Send Email
+  </button>
     <button @click="saveDraft" class="send-button">
         <i class="fas fa-file"></i> Save Draft
       </button>
     <div>
-      <!-- <button @click="generateDateTime">Generate Date & Time</button> -->
       <p>{{ dateTime }}</p>
     </div>
   </div>
@@ -93,6 +94,32 @@ export default {
       const files = event.target.files;
       this.attachments = Array.from(files).map(file => file.name);
     },
+     async submitForm() {
+      const validEmailDomains = ['@gmail.com', '@alexu.edu.eg'];
+
+      if (this.to.length === 0) {
+        alert('Please add at least one recipient');
+        return;
+       }
+
+       if (this.emailBody.length === 0) {
+        alert('Please enter an email body');
+        return;
+       }
+
+      const isValidEmails = this.to.every(user => {
+        return validEmailDomains.some(domain => user.email.endsWith(domain));
+      });
+
+      if (!isValidEmails) {
+        alert('Please enter valid email addresses ending with @gmail.com or @alexu.edu.eg');
+        this.to = [];
+        return;
+      }
+
+      await this.sendEmail();
+    },
+    
     async sendEmail() {
       console.log('To:', this.to);
       console.log('From:', this.from);
@@ -101,6 +128,8 @@ export default {
       const currentDate = new Date();
       const formattedDateTime = format(currentDate, "yyyy-MM-dd h:mm a");
       this.dateTime = formattedDateTime;
+
+      
       try {
         const response = await fetch('http://localhost:8081/mail/sendEmail', {
           method: 'POST',
@@ -118,11 +147,14 @@ export default {
 
         if (response.ok) {
           console.log('Email sent successfully');
+          alert('Email sent successfully');
         } else {
           console.error('Failed to send email');
+          alert('Failed to send email');
         }
       } catch (error) {
         console.error('Error sending email:', error);
+        alert('Error sending email');
       }
     },
     openAddUserModal() {
@@ -156,6 +188,7 @@ export default {
       localStorage.setItem('emailDraft', draftJson);
       console.log('Draft saved successfully');
       console.log('Draft:', draft);
+      alert('Draft saved successfully');
     },
     
   },
