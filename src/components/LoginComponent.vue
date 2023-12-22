@@ -34,30 +34,30 @@
       </div>
   </div>
 </template>
+
 <script setup>
-
-
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 const router = useRouter();
-const emailaccount = ref('');
-const password = ref('');
-const username =  ref('');
-const birth =  ref('');
+
+let username = ref('');
+let emailaccount = ref('');
+let password = ref('');
+let confirmPassword = ref('');
+let birth = ref('');
+let acceptTerms = ref(false);
 const folders = ref([
-      { "emails": [], "name": "inbox" },
-      { "emails": [], "name": "draft" },
-      { "emails": [], "name": "sent" },
-      { "emails": [], "name": "trash" }
-    ]);
+  { "emails": [], "name": "inbox" },
+  { "emails": [], "name": "draft" },
+  { "emails": [], "name": "sent" },
+  { "emails": [], "name": "trash" }
+]);
 const contacts = ref([]);
-const idMessage = ref(0);
+const idMessage = ref(1);
+
 
 const validateLogin = async () => {
   try {
-
-    console.log("email = " + emailaccount.value);
-    console.log("pass = " + password.value);
     const response = await fetch('http://localhost:8081/mail/signin', {
       method: 'POST',
       headers: {
@@ -77,28 +77,30 @@ const validateLogin = async () => {
 
     const responseData = await response.json();
     console.log(responseData);
-    const message = responseData;
-    if (message.username !== undefined) {
-      document.cookie = `username=${username.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+    if (responseData.username !== undefined) {
+      document.cookie = `username=${responseData.username}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
       document.cookie = `email=${emailaccount.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
       document.cookie = `password=${password.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
       document.cookie = `birth=${birth.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      folders.value = responseData.folders || [];
+      console.log(folders.value);
       document.cookie = `folders=${JSON.stringify(folders.value)}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      contacts.value = responseData.contacts || [];
       document.cookie = `contacts=${JSON.stringify(contacts.value)}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
       document.cookie = `idMessage=${idMessage.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
-
-      alert('SignIn successful!');
+        
+      alert('Sign In successful!');
       goToProfilePage();
-    } else {
-      alert(`SignIn failed: ${message}`);
+    } else {  
+      alert(`Sign In failed: ${message}`);
     }
   } catch (error) {
-    console.error('SignIn failed:', error);
+    console.error('Sign In failed:', error);
     alert('An unexpected error occurred. Please try again.');
   }
-  
-
 };
+
+
 const goToProfilePage = (username, email, folders, contacts, idMessage) => {
   router.push({
     name: 'profile',
@@ -106,8 +108,8 @@ const goToProfilePage = (username, email, folders, contacts, idMessage) => {
   });
 };
 
-</script>
 
+</script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap');
