@@ -141,18 +141,8 @@ export default {
     async saveForm() {
       const validEmailDomains = ['@gmail.com', '@alexu.edu.eg'];
 
-      if (this.to.length === 0) {
-        alert('Please add at least one recipient');
-        return;
-      }
-
-      if (this.subject.length === 0) {
-        alert('Please enter a subject');
-        return;
-      }
-
-      if (this.emailBody.length === 0) {
-        alert('Please enter an email body');
+      if (this.to.length === 0 && this.subject.length === 0 && this.emailBody.length === 0) {
+        alert('There is nothing to save');
         return;
       }
 
