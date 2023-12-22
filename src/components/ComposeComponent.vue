@@ -101,6 +101,11 @@ export default {
     handleFileUpload(event) {
       const files = event.target.files;
       this.attachments = Array.from(files).map(file => file.name);
+
+      this.fileBlobs = Array.from(files);
+
+      console.log(this.fileBlobs);
+    
     },
      async submitForm() {
       const validEmailDomains = ['@gmail.com', '@alexu.edu.eg'];
