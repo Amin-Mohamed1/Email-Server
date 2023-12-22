@@ -10,7 +10,7 @@ public class CriteriaFactory {
         else if (criteriaName.equalsIgnoreCase("DATETIME"))
             return new CriteriaDateTime(criteriaValue.get(FIRSTELEMENT));
         else if (criteriaName.equalsIgnoreCase("PRIORITY"))
-            return new CriteriaPriority(criteriaValue.get(FIRSTELEMENT));
+            return new CriteriaPriority(Integer.parseInt(criteriaValue.get(FIRSTELEMENT)));
         else if (criteriaName.equalsIgnoreCase("RECIEVER"))
             return new CriteriaReciever(criteriaValue);
         else if (criteriaName.equalsIgnoreCase("SENDER"))

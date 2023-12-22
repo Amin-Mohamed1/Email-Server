@@ -15,7 +15,7 @@ public class Email {
     private String subject;
     private String body;
     private List<String> attatchments;
-    private String priority;
+    private int priority;
     private boolean isRead ;
 
     public boolean isRead() {
@@ -59,7 +59,7 @@ public class Email {
         this.attatchments = attatchments;
     }
 
-    public void setPriority(String priority) {
+    public void setPriority(int priority) {
         this.priority = priority;
     }
 
@@ -94,7 +94,7 @@ public class Email {
         return attatchments;
     }
 
-    public String getPriority() {
+    public int getPriority() {
         return priority;
     }
 

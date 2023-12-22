@@ -13,7 +13,7 @@ public class EmailBuilder{
     private String subject;
     private String body;
     private List<String> attatchments;
-    private String priority;
+    private int priority;
     private String dateTime;
     private boolean isRead ;
 
@@ -57,7 +57,7 @@ public class EmailBuilder{
         return attatchments;
     }
 
-    public String getPriority() {
+    public int getPriority() {
         return priority;
     }
 
@@ -80,7 +80,7 @@ public class EmailBuilder{
         return this;
     }
 
-    public EmailBuilder setPriority(String priority) {
+    public EmailBuilder setPriority(int priority) {
         this.priority = priority;
         return this;
     }
