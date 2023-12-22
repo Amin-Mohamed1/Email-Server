@@ -29,6 +29,13 @@
       </div>
     </div>
 
+    <div class="input-group subject-group">
+        <label for="subject">
+          <i class="fa-solid fa-pen"></i> Subject:
+        </label>
+        <input type="text" id="subject" v-model="subject" maxlength="30" placeholder="Enter subject here (max 30 characters)" required/>
+      </div>
+
     <textarea v-model="emailBody" placeholder="Compose your email..." class="compose-textarea"></textarea>
 
     <div v-if="showAddUserModal" class="modal">
@@ -83,6 +90,7 @@ export default {
       showAddUserModal: false,
       newUserEmail: '',
       to: [],
+      subject: '',
       dateTime: '',
     };
   },
@@ -99,6 +107,11 @@ export default {
 
       if (this.to.length === 0) {
         alert('Please add at least one recipient');
+        return;
+       }
+
+      if (this.subject.length === 0) {
+        alert('Please enter a subject');
         return;
        }
 
@@ -123,6 +136,7 @@ export default {
     async sendEmail() {
       console.log('To:', this.to);
       console.log('From:', this.from);
+      console.log('Subject:', this.subject);
       console.log('Sending email with body:', this.emailBody);
       console.log('Attachments:', this.attachments);
       const currentDate = new Date();
@@ -139,6 +153,7 @@ export default {
           body: JSON.stringify({
             to: this.to,
             from: this.from,
+            subject: this.subject,
             emailBody: this.emailBody,
             attachments: this.attachments,
             dateTime: this.dateTime,
@@ -338,7 +353,8 @@ h2 {
 
 .input-group input,
 .to-group input,
-.from-group input {
+.from-group input,
+.subject-group input {
   width: 80%;
   padding: 10px;
   font-size: 16px;
@@ -349,7 +365,8 @@ h2 {
 
 .input-group input:focus,
 .to-group input:focus,
-.from-group input:focus {
+.from-group input:focus,
+.subject-group input:focus {
   border-color: #ffffff;
 }
 

@@ -68,7 +68,7 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
-const router = useRouter();
+// import FilterComponent from './FilterComponent.vue';
 const isSidebarExpanded = ref(false);
 const username = ref('');
 const email = ref('');
