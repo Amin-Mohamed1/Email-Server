@@ -1,5 +1,5 @@
 <template>
-      <h2 class="folders-title">Folders<i class="fa fa-folder" style="margin-left: 10px;"></i></h2>
+      <h2 class="folders-title"><i class="fa fa-folder" style="margin-left: 10px;"></i> Folders</h2>
     
       <transition-group name="fade" mode="out-in">
         <div class="folderdiv">
@@ -164,9 +164,9 @@ export default {
 
 <style>
 .folders-title {
-    font-size: 30px;
-    margin-bottom: 20px;
-    color: #333;
+    color: #187dc1;
+  font-size: 28px;
+  margin-bottom: 15px;
   }
   
   .folderdiv {

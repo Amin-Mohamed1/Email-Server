@@ -1,8 +1,9 @@
 <template>
-  <h2 class="trash-title">Trash<i class="fa fa-trash redtrash" style="margin-left: 10px;"></i></h2>
+  <div class="trash-container">
+  <h2 class="trash-title"><i class="fa fa-trash redtrash" style="margin-left: 10px;"></i> Trash</h2>
  
    <transition-group name="fade" mode="out-in">
-     <table v-if="showTrash" class="table ">
+     <table v-if="showTrash" class="trash-list ">
      <thead>
        <tr>
          <th scope="col" class="selectcol"></th>
@@ -15,7 +16,7 @@
        </tr>
      </thead>
      <tbody>
-       <tr v-for="mail in mails" :key="mail.id">
+       <tr v-for="mail in mails" :key="mail.id" class="hoverable-row">
          <td>
            <input type="checkbox" v-model="selectedMails" :value="mail.id" @change="onchange" />
          </td>
@@ -33,8 +34,8 @@
      </tbody>
    </table>
      </transition-group>
-     {{profileContactInfo}}
      {{ Trashemails }}
+    </div>
 </template>
 <script>
 import { ref } from 'vue';
@@ -73,95 +74,89 @@ methods: {
 
 <style scoped>
 
+.trash-container {
+  max-width: 2000px;
+  margin: auto;
+  padding: 20px;
+}
 .trash-title {
- font-size: 30px;
- margin-bottom: 20px;
- color: #333;
+  color: #187dc1;
+  font-size: 28px;
+  margin-bottom: 15px;
+}
+
+.prioritycol,
+.contentcol,
+.sendercol,
+.subjectcol,
+.datecol,
+.selectcol,
+.trashcol {
+  font-weight: bold;
+  color: #555;
+  font-size: 20px;
+  margin: 0px;
+  cursor: pointer;
+  position: relative;
 }
 
 .prioritycol {
-width: 100px;
-font-weight: bold;
-color: #007BFF;
-font-size: 20px;
-margin: 0px;
+  width: 100px;
 }
+
 .contentcol {
-width: 500px;
-font-weight: bold;
- color: #007BFF;
- font-size: 20px;
- margin: 0px;
- 
+  width: 500px;
 }
 
-.sendercol {
-width: 250px;
-font-weight: bold;
- color: #007BFF;
- font-size: 20px;
- margin: 0px;
-}
-
+.sendercol,
 .subjectcol {
-width: 250px;
-font-weight: bold;  
-color: #007BFF;
- font-size: 20px;
- margin: 0px;
+  width: 250px;
 }
 
 .datecol {
-width: 180px;
-font-weight: bold;
- color: #007BFF;
- font-size: 20px;
- margin: 0px;
-}
-.selectcol {
-width: 20px;
-font-weight: bold;
-color: #007BFF;
-font-size: 10px;
-margin: 0px;
+  width: 150px;
 }
 
+.selectcol,
 .trashcol {
-width: 20px;
-font-weight: bold;
- color: #007BFF;
- font-size: 20px;
- margin: 0px;
+  width: 20px;
+ 
 }
 
-table {
-border-collapse: collapse;
-width: 100%;
-font-weight: bold;
-color: #0a0c0e;
-font-size: 20px;
-margin: 0px;
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
 }
-table, th, td {
-border: 2px solid black;
-text-align: center;
+th {
+  background-color: #f2f2f2;
 }
-.table:hover{
-transform: scale(1.02);
+.hoverable-row:hover {
+  background-color: #f0f0f0;
 }
 
-#icon{
-font-size: 40px;
-color:rgb(202, 59, 59);
-margin: 60px;
+#icon {
+  font-size: 40px;
+  color: #ff5555;;
+  margin: 60px;
 }
 
-#icon:hover{
-color: #007BFF;
-transform:scale(1.02) ;
+#icon:hover {
+  color: #dd4444;
+  transform: scale(1.02);
+}
+.trash-list {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 
-input{
-margin: 5%;
+input {
+  margin: 0px;
+  padding: 0px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
 }
 </style>

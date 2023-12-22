@@ -1,6 +1,6 @@
 <template>
     <div>
-      <h2 class="drafts-title">Drafts</h2>
+      <h2 class="drafts-title"><i class="fas fa-file"></i> Drafts</h2>
       <transition-group name="fade" mode="out-in">
         <div v-for="draft in draftEmails" :key="draft.id" class="email-item">
           <div class="info">
@@ -81,9 +81,9 @@
 
   <style scoped>
     .drafts-title {
-      font-size: 24px;
-      margin-bottom: 20px;
-      color: #333;
+      color: #187dc1;
+    font-size: 28px;
+    margin-bottom: 15px;
     }
   
     .email-item {

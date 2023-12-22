@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="inbox-title">Inbox</h2>
+    <h2 class="inbox-title"><i class="fa-solid fa-inbox"></i> Inbox</h2>
     <div class="search-bars-container">
       <div class="search-bar">
         <select v-model="searchCategory" class="search-category">
@@ -176,9 +176,9 @@ const changePage = (direction) => {
   }
 
   .inbox-title {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333;
+    color: #187dc1;
+  font-size: 28px;
+  margin-bottom: 15px;
   }
   
   .email-item {

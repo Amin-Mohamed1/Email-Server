@@ -253,14 +253,12 @@ export default {
   box-shadow: 0 6px 6px rgba(4, 4, 4, 0.1);
 }
 
-/* Heading styling */
 h2 {
   color: #187dc1;
   font-size: 28px;
   margin-bottom: 15px;
 }
 
-/* Textarea styling */
 .compose-textarea {
   width: 600px;
   height: 300px;
