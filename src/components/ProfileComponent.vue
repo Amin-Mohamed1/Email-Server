@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <aside class="sidebar" :class="{ 'expanded': isSidebarExpanded }" @mouseover="expandSidebar" @mouseleave="collapseSidebar">
+    <aside class="sidebar">
 
       <div class="logo">
         <img src="@/assets/logo.png" alt="Logo" />
@@ -12,7 +12,7 @@
           <i class="fas fa-user-circle"></i>
         </div>
         <div class="user-details">
-          <p class="username" @mouseover="highlightText" @mouseleave="resetText">{{ profileContactInfo }}</p>
+          <p class="username" @mouseover="highlightText" @mouseleave="resetText">{{ profileUsername }}</p>
         </div>
       </div>
 
@@ -49,13 +49,10 @@
             <i class="fas fa-sign-out-alt animated-icon"></i> Logout
           </router-link>
       </nav>
-
       
+
     </aside>
     <main class="main-content">
-      <div class = "utility" >
-        <FilterComponent />
-      </div>
       <router-view 
         :profileContactInfo="profileContactInfo" 
         :userList = "userList" 
@@ -67,8 +64,6 @@
     </main>
   </div>
 </template>
-
-
 
 <script setup>
 import { useRouter } from 'vue-router';
@@ -100,41 +95,58 @@ onMounted(() => {
     if (name === 'username') {
       username.value = value;
       profileUsername.value = value;
+      console.log(profileUsername.value);
+      
     } else if (name === 'email') {
       email.value = value;
       profileContactInfo.value = value;
+      console.log(profileContactInfo.value);
     }
     else if(name === 'idMessage'){
       idMessage.value = parseInt(value);
       profileIdmessage.value = idMessage.value;
     }
-     else if(name === 'folders'){
-      folders.value = JSON.parse(value);
+    else if (name === 'folders') {
+  try {
+    const parsedValue = Array.isArray(value) ? value : JSON.parse(value);
+      folders.value = parsedValue;
+      console.log("Folders:", folders.value);
+
       const inboxFolder = folders.value.find(folder => folder.name === 'inbox');
       if (inboxFolder) {
         Inboxemails.value = inboxFolder.emails || [];
-        console.log("inbox " + Inboxemails.value);
+        console.log("Inbox emails:", Inboxemails.value);
       }
+
       const sentFolder = folders.value.find(folder => folder.name === 'sent');
       if (sentFolder) {
         Sentemails.value = sentFolder.emails || [];
-        console.log("sent " + Sentemails.value);
+        console.log("Sent emails:", Sentemails.value);
+
       }
+
       const draftFolder = folders.value.find(folder => folder.name === 'draft');
       if (draftFolder) {
         Draftemails.value = draftFolder.emails || [];
-        console.log("draft " + Draftemails.value);
+        console.log("Draft emails:", Draftemails.value);
       }
+
       const trashFolder = folders.value.find(folder => folder.name === 'trash');
       if (trashFolder) {
         Trashemails.value = trashFolder.emails || [];
-        console.log("trash " + Trashemails.value);
+        console.log("Trash emails:", Trashemails.value);
       }
-    }else if(name === 'contacts'){
-      contacts.value = JSON.parse(value);
-      userList.value = JSON.parse(value);
-      console.log(contacts.value);
+    } catch (error) {
+      console.error('Error parsing folders:', error);
     }
+  }else if (name === 'contacts') {
+    userList.value = JSON.parse(value);
+    if (userList.value.length > 0) {
+      console.log(userList.value[0] + " contact");
+    } else {
+      console.log("No contacts available");
+    }
+  }
   }
 });
 
