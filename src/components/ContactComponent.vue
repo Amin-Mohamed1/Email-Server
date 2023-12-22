@@ -6,7 +6,7 @@
         <input type="text" id="name" v-model="formData.name" required placeholder="Enter name">
       </div>
       <div class="input-box">
-        <input type="email" id="emailaccount" v-model="formData.emailaccount" required placeholder="Enter emailaccount">
+        <input type="email" id="emailaccount" v-model="formData.emailaccount" required placeholder="Enter email account">
       </div>
       <div class="input-box button">
         <button type="submit" class="submit-btn">Add Contact</button>
@@ -17,8 +17,14 @@
     <table class="user-list">
       <thead>
         <tr>
-          <th>Name</th>
-          <th>Email</th>
+          <th class="sort-header" @click="sortByName('asc')">
+            Name
+            <i class="fas fa-sort-alpha-down sort-icon" :class="{ 'rotate-icon': sortOrder === 'asc' }"></i>
+          </th>
+          <th class="sort-header" @click="sortByGmail('asc')">
+            Email
+            <i class="fas fa-sort-alpha-down sort-icon" :class="{ 'rotate-icon': sortOrder === 'asc' }"></i>
+          </th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -52,10 +58,19 @@ export default defineComponent({
         emailaccount: '',
       },
       nextId: 1,
+      sortOrder: 'asc',
     };
   },
   methods: {
     async submitForm() {
+      const validEmailDomains = ['@gmail.com', '@alexu.edu.eg'];
+      const isValidEmail = validEmailDomains.some(domain => this.formData.emailaccount.endsWith(domain));
+
+      if (!isValidEmail) {
+        alert('Please enter a valid email ending with @gmail.com or @alexu.edu.eg');
+        return;
+      }
+      
       const addedUser = {
         id: this.nextId,
         name: this.formData.name,
@@ -85,7 +100,11 @@ export default defineComponent({
           name: addedUser.name
         }),
       });
-      console.log(response.data);
+      const responseData = await response.json();
+        console.log(responseData);
+        responseData.forEach(contact => {
+          console.log(contact.id, contact.name, contact.emailaccount);
+        });
      }catch(error){
       console.log(error + " why!");
      }
@@ -110,6 +129,38 @@ export default defineComponent({
         }
       }
     },
+    sortByName(order) {
+      if (order === this.sortOrder) {
+        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortOrder = order;
+      }
+      this.userList.sort((a, b) => {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+        if (this.sortOrder === 'asc') {
+          return nameA.localeCompare(nameB);
+        } else {
+          return nameB.localeCompare(nameA);
+        }
+      });
+    },
+    sortByGmail(order) {
+      if (order === this.sortOrder) {
+        this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+      } else {
+        this.sortOrder = order;
+      }
+      this.userList.sort((a, b) => {
+        const gmailnameA = a.emailaccount.toUpperCase();
+        const gmailnameB = b.emailaccount.toUpperCase();
+        if (this.sortOrder === 'asc') {
+          return gmailnameA.localeCompare(gmailnameB);
+        } else {
+          return gmailnameB.localeCompare(gmailnameA);
+        }
+      });
+    },
     async sendEditedDataToBackend(editedUser) {
       const account = this.profileContactInfo;
       console.log(editedUser.name);
@@ -125,7 +176,11 @@ export default defineComponent({
           name: editedUser.name
         }),
       });
-      console.log(response.data);
+      const responseData = await response.json();
+      console.log(responseData);
+      responseData.forEach(contact => {
+        console.log(contact.id, contact.name, contact.emailaccount);
+      });
      }catch(error){
       console.log(error + " why!");
      }
@@ -143,7 +198,11 @@ export default defineComponent({
 
           }),
         });
-        console.log(response.data);
+        const responseData = await response.json();
+        console.log(responseData);
+        responseData.forEach(contact => {
+          console.log(contact.id, contact.name, contact.emailaccount);
+        });
       }catch(error){
         console.log(error + " why!");
       }
@@ -220,6 +279,9 @@ input:valid {
   border-collapse: collapse;
   margin-top: 20px;
 }
+.rotate-icon {
+  transform: rotate(180deg);
+}
 th,
 td {
   border: 1px solid #ddd;
@@ -228,6 +290,18 @@ td {
 }
 th {
   background-color: #f2f2f2;
+}
+.sort-header {
+  cursor: pointer;
+  position: relative;
+}
+
+.sort-icon {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #555; /* Adjust the color as needed */
 }
 .hoverable-row:hover {
   background-color: #f0f0f0;
