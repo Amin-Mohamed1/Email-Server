@@ -84,17 +84,16 @@ public class control {
 
     @PostMapping("/sendEmail")
     public ResponseEntity<String> sendEmail(@RequestBody EmailBuilder e) {
-        try{
+        try {
             se.sendEmail(e);
             return ResponseEntity.ok("tarsh");
-        }catch (Exception w ){
+        } catch (Exception w) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("null");
 
         }
-
     }
     @PostMapping("/filter/{account}/{type}/{value}")
-    public ResponseEntity<ArrayList<Email>> sendEmail(@PathVariable String account, @PathVariable String type,@PathVariable ArrayList<String> value) {
+    public ResponseEntity<ArrayList<Email>> filter(@PathVariable String account, @PathVariable String type,@PathVariable ArrayList<String> value) {
         try{
             return ResponseEntity.ok(se.filter(account , type , value));
         }catch (Exception w ){
@@ -102,10 +101,10 @@ public class control {
         }
     }
 
-    @PostMapping("/sortEmail/{account}/{type}/{sortingOrder}")
-    public ResponseEntity<ArrayList<Email>> sortEmail(@PathVariable String account, @PathVariable String type, @PathVariable boolean sortingOrder){
+    @PostMapping("/sortEmail/{account}/{folder}/{type}/{sortingOrder}")
+    public ResponseEntity<ArrayList<Email>> sortEmail(@PathVariable String account, @PathVariable String folder, @PathVariable String type, @PathVariable boolean sortingOrder ){
         try{
-            return ResponseEntity.ok(se.sortEmail(account, type, sortingOrder));
+            return ResponseEntity.ok(se.sortEmail(account, type, sortingOrder , folder));
         }catch (Exception w ){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }

@@ -26,11 +26,11 @@ public class ServiceEmailFacade {
     public ServiceEmailFacade() throws IOException {
     }
     public void sendEmail(EmailBuilder e) throws IOException, ParseException {
-        Email email = e.build() ;
+        Email email = e.build();
         //email.setRead(true);
-        User s = DataHelper.getUserByAccount(email.getSender()) ;
-        if(s instanceof Acceptable){
-            s.addEmailToFolder("sent" , email);
+        User s = DataHelper.getUserByAccount(email.getSender());
+        if (s instanceof Acceptable) {
+            s.addEmailToFolder("sent", email);
 //            System.out.println(email.getRecievers().get(0));
 //            String ema = email.getRecievers().get(0) ;
 //            System.out.println("bola hany");
@@ -41,9 +41,9 @@ public class ServiceEmailFacade {
 //            if (r != null) {
 //                r.addEmailToFolder("inbox",email);
 //            }
-            for(int i = 0 ; i < email.getRecievers().size() ; i++){
+            for (int i = 0; i < email.getRecievers().size(); i++) {
                 User r = DataHelper.getUserByAccount(email.getRecievers().get(i));
-                r.addEmailToFolder("inbox",email);
+                r.addEmailToFolder("inbox", email);
             }
             d.saveToJson();
         }
@@ -64,16 +64,17 @@ public class ServiceEmailFacade {
         return criteria.meetCriteria(emails) ;
     }
 
-    public ArrayList<Email> sortEmail (String account, String type, boolean sortingOrder){
+    public ArrayList<Email> sortEmail (String account, String type, boolean sortingOrder , String folder){
         User u = DataHelper.getUserByAccount(account) ;
         ArrayList<Email> emails = new ArrayList<>() ;
         for(Folder f : u.getFolders()){
-            for(Email e : f.getEmails()){
-                if(!emails.contains(e))
-                    emails.add(e) ;
+            if(f.getName().equals(folder)) {
+                for (Email e : f.getEmails()) {
+                    if (!emails.contains(e))
+                        emails.add(e);
+                }
             }
         }
-
         SortFactory factory = new SortFactory() ;
         Strategy strategy = factory.getSort(type) ;
         return strategy.doOperation(emails, sortingOrder);
