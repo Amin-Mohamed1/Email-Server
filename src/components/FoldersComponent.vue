@@ -1,24 +1,26 @@
 <template>
-      <h2 class="folders-title"><i class="fa fa-folder" style="margin-left: 10px;"></i> Folders</h2>
-    
+  <div class="folders-container">
+     <h2><i class="fa-solid fa-folder-plus"></i> Create New Folder</h2>
+  
       <transition-group name="fade" mode="out-in">
         <div class="folderdiv">
-          <div class="newfolderform">
-            <label class="create" for="folderName">Create New Folder</label>
+       
             <input v-model="newFolderName" id="folderName" type="text" placeholder="Enter folder name" />
-          </div>
+         </div>
           <div>
-            <button class="newfolderbutton" @click="createFolder()">Create new folder <i class="fa fa-plus" style="color: azure; font-size: 18px"></i></button>
+            <button class="newfolderbutton" @click="createFolder()">Create folder</button>
           </div>
-        </div>
+        
+        <h2 class="folders-title"><i class="fa fa-folder" style="margin-left: 10px;"></i> Folders</h2>
         <div v-for="folderName in folders" :key="folderName" class="foldersdiv">
+           
           <label class="folderlabel">
             {{ folderName }}
-            <a class="icon" title="Rename folder" href="javascript:void(0)" @click="showRenameModal(folderName)">
-              <i class="fa fa-pen" style="color: #0056b3; font-size: 20px; margin-left: 20px"></i>
+            <a class="edit-icon" title="Rename folder" href="javascript:void(0)" @click="showRenameModal(folderName)">
+              <i class="fa fa-pen" ></i>
             </a>
-            <a class="icon" title="Delete folder" href="javascript:void(0)" @click="deleteFolder(folderName)">
-              <i class="fa fa-trash redtrash" style="color: rgb(202, 59, 59); font-size: 20px; margin-left: 10px"></i>
+            <a class="delete-icon" title="Delete folder" href="javascript:void(0)" @click="deleteFolder(folderName)">
+              <i class="fa fa-trash redtrash"></i>
             </a>
           </label>
 
@@ -73,6 +75,7 @@
             </table>
             </div>
         </transition-group>
+        </div>
 </template>
 
 <script>
@@ -162,113 +165,98 @@ export default {
 </script>
 
 
-<style>
-.folders-title {
+<style scoped>
+
+h2{
     color: #187dc1;
   font-size: 28px;
   margin-bottom: 15px;
   }
   
+  .folders-container {
+  max-width: 1000px;
+  margin: auto;
+  padding: 20px;
+}
   .folderdiv {
-    display: flex;
-    flex-direction: row;
-    background-color: #4196f1;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: #333 4px outset;
-  }
+  max-width: 400px;
+  margin: auto;
+  margin-bottom: 20px;
+}
   
-  .folderdiv:hover{
-   transform: scale(1.02);
-}
-  .create{
-    color: azure;
-    font-size: 30px;
-    margin-right: 10px;
-    font-weight: normal;
-  }
-
-  .newfolderform {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .newfolderform:hover{
-   transform: scale(1.02);
-}
 
   input {
-    width: 300px;
-    height: 30px;
-    border-radius: 5px;
-    border: none;
-    padding-left: 10px;
-    font-size: 20px;
-    margin-left: 15px;
-  }
+  height: 100%;
+  width: 100%;
+  outline: none;
+  padding: 10px;
+  font-size: 16px;
+  color: #333;
+  border: 1.5px solid #C7BEBE;
+  border-bottom-width: 2.5px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+}
+input:focus,
+input:hover {
+  border-color: #4070f4;
+}
 
   .newfolderbutton {
-    background-color: #0056b3;
-    color: azure;
-    font-size: 20px;
-    border: none;
-    border-radius: 5px;
-    padding: 10px;
-    margin-left: 25px;
-    cursor: pointer;
-  }
-
-  .newfolderbutton:hover {
-    background-color: #003d80;
-  }
+  background: #4070f4;
+  margin-left: 450px ;
+   color: #fff;
+  letter-spacing: 1px;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+ 
+}
+.newfolderbutton:hover {
+  background: #0e4bf1;
+}
 
   .table:hover{
-   transform: scale(1.02);
+   background-color: #f0f0f0;
 }
 
 .foldersdiv {
-  display: flex;
-  flex-direction: row;
-  background-color: #4196f1;
-  padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 5px;
+ width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
 }
 
-.foldersdiv:hover{
-   transform: scale(1.02);
-}
 
 .folderlabel {
   font-size: 20px;
-  color: azure;
+  color: rgb(3, 16, 16);
   margin-right: 10px;
   font-weight: bold;
 }
 
-i:hover{
-  color: #0056b3;
-  transform: scale(1.02);
+.edit-icon {
+  color: #4caf50;
+}
+.edit-icon:hover {
+  color: #45a049;
+}
+.delete-icon {
+  color: #ff5555;
+  margin-left: 5px;
+}
+.delete-icon:hover {
+  color: #dd4444;
 }
 
-.icon{
-  display: inline-flex;
-    flex-direction: row;
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: left;
 }
-
-table, th, td {
-  border: 1px solid black;
-  text-align: center;
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-  font-weight: bold;
-  color: #0a0c0e;
-  font-size: 16px;
-  margin: 0px;
+th {
+  background-color: #f2f2f2;
 }
 </style>
