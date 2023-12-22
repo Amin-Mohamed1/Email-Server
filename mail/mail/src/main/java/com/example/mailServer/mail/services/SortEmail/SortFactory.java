@@ -10,6 +10,10 @@ public class SortFactory {
                 return new SortDateTimeStrategy();
             else if (type.equalsIgnoreCase("PRIORITY"))
                 return new SortPriorityStrategy();
+            else if (type.equalsIgnoreCase("SUBJECT"))
+                return new SortSubjectStrategy();
+            else if (type.equalsIgnoreCase("SENDER"))
+                return new SortSenderStrategy();
             else
                 return null;
         }
