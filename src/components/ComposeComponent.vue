@@ -67,7 +67,7 @@
     <button @click="submitForm" class="send-button">
     <i class="fas fa-paper-plane"></i> Send Email
   </button>
-    <button @click="saveDraft" class="send-button">
+    <button @click="saveForm" class="send-button">
         <i class="fas fa-file"></i> Save Draft
       </button>
     <div>
@@ -136,6 +136,37 @@ export default {
       }
 
       await this.sendEmail();
+    },
+
+    async saveForm() {
+      const validEmailDomains = ['@gmail.com', '@alexu.edu.eg'];
+
+      if (this.to.length === 0) {
+        alert('Please add at least one recipient');
+        return;
+      }
+
+      if (this.subject.length === 0) {
+        alert('Please enter a subject');
+        return;
+      }
+
+      if (this.emailBody.length === 0) {
+        alert('Please enter an email body');
+        return;
+      }
+
+      const isValidEmails = this.to.every(user => {
+        return validEmailDomains.some(domain => user.email.endsWith(domain));
+      });
+
+      if (!isValidEmails) {
+        alert('Please enter valid email addresses ending with @gmail.com or @alexu.edu.eg');
+        this.to = [];
+        return;
+      }
+
+      await this.saveDraft();
     },
     
     async sendEmail() {
