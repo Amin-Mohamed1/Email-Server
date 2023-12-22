@@ -107,9 +107,12 @@ const validateSignup = async () => {
     const message = responseData;
     if (message.username !== undefined) {
       document.cookie = `username=${username.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      console.log(username.value + "p");
       document.cookie = `email=${emailaccount.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
       document.cookie = `password=${password.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
       document.cookie = `birth=${birth.value}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
+      folders.value = responseData.folders || [];
+      console.log(folders.value);
       document.cookie = `folders=${JSON.stringify(folders.value)}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
       contacts.value = responseData.contacts || [];
       document.cookie = `contacts=${JSON.stringify(contacts.value)}; expires=${new Date(Date.now() + 86400000 * 100).toUTCString()}; path=/`;
