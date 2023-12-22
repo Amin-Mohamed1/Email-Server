@@ -6,7 +6,7 @@
      <table v-if="showTrash" class="trash-list ">
      <thead>
        <tr>
-         <th scope="col" class="selectcol"></th>
+         <!-- <th scope="col" class="selectcol">No.</th> -->
          <th scope="col" class="prioritycol">Priority</th>
          <th scope="col" class="sendercol">Sender</th>
          <th scope="col" class="datecol">Date</th>
@@ -17,9 +17,14 @@
      </thead>
      <tbody>
        <tr v-for="mail in mails" :key="mail.id" class="hoverable-row">
-         <td>
+        <!-- <td>
+                    {{ mail.id }}
+                    <a href="javascript:void(0)" :value="mail.id" @change="onchange" >
+                    </a>
+                  </td> -->
+         <!-- <td>
            <input type="checkbox" v-model="selectedMails" :value="mail.id" @change="onchange" />
-         </td>
+         </td> -->
          <td>{{ mail.priority }}</td>
          <td>{{ mail.sender }}</td>
          <td>{{ mail.date }}</td>
@@ -47,12 +52,13 @@ export default {
 data() {
  return {
    showTrash: true,
-   mails: [
-     { id: 1, sender: 'Albert.Einstein@gmail.com', subject: 'Meeting Tomorrow', content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.', priority: 'Medium', date: '02/01/2023' },
-     { id: 2, sender: 'Robert.Oppenheimer@gmail.com', subject: 'Presentation Feedback', content: 'Your presentation was excellent!', date: '05/11/2023', priority: 'Medium' },
-     { id: 3, sender: 'Neils.Bohr@gmail.com', subject: 'Meeting Tomorrow', content: 'Hi, let\'s discuss the project tomorrow.', date: '01/01/2023', priority: 'High' },
-     { id: 4, sender: 'Lionel.Messi@gmail.com', subject: 'Presentation Feedback', content: 'Your presentation was excellent!', date: '02/01/2023', priority: 'Medium' },
-   ], // Assuming mails is an array of objects
+   mails: [...this.Trashemails], 
+    // mails: [
+    //     { id: 1, sender: 'Albert.Einstein@gmail.com', subject: 'Meeting Tomorrow', content: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.', priority: 'Medium', date: '02/01/2023' },
+    //     { id: 2, sender: 'Robert.Oppenheimer@gmail.com', subject: 'Presentation Feedback', content: 'Your presentation was excellent!', date: '05/11/2023', priority: 'Medium' },
+    //     { id: 3, sender: 'Neils.Bohr@gmail.com', subject: 'Meeting Tomorrow', content: 'Hi, let\'s discuss the project tomorrow.', date: '01/01/2023', priority: 'High' },
+    //     { id: 4, sender: 'Lionel.Messi@gmail.com', subject: 'Presentation Feedback', content: 'Your presentation was excellent!', date: '02/01/2023', priority: 'Medium' },
+    //   ],
    selectedMails: []
  };
 },
