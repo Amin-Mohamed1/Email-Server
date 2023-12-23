@@ -1,6 +1,6 @@
 <template>
   <div class="contact-container">
-    <h2><i class="fa-solid fa-user-plus"></i> Add to Contact</h2>
+    <h2>Add to Contact</h2>
     <form @submit.prevent="submitForm" class="contact-form">
       <div class="input-box">
         <input type="text" id="name" v-model="formData.name" required placeholder="Enter name">
@@ -13,7 +13,7 @@
       </div>
     </form>
 
-    <h2><i class="fa-solid fa-address-book"></i> Contacts</h2>
+    <h2>Contact</h2>
     <table class="user-list">
       <thead>
         <tr>
@@ -305,10 +305,5 @@ th {
 }
 .hoverable-row:hover {
   background-color: #f0f0f0;
-}
-h2 {
-  color: #187dc1;
-  font-size: 28px;
-  margin-bottom: 15px;
 }
 </style>
