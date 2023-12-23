@@ -143,7 +143,7 @@ public class control {
 
 
     @PostMapping("/search/{account}/{type}/{value}")
-    public ResponseEntity<ArrayList<Email>> search(@PathVariable String account, @PathVariable String type,@PathVariable ArrayList<String> value) {
+    public ResponseEntity<ArrayList<Email>> search(@PathVariable String account, @PathVariable String type,@PathVariable String value) {
         try{
             return ResponseEntity.ok(se.search(account , type , value));
         }catch (Exception w ){
@@ -152,7 +152,7 @@ public class control {
     }
 
     @PostMapping("/filter/{account}/{folder}/{type}/{value}")
-    public ResponseEntity<ArrayList<Email>> filter(@PathVariable String account,@PathVariable String folder , @PathVariable String type,@PathVariable ArrayList<String> value) {
+    public ResponseEntity<ArrayList<Email>> filter(@PathVariable String account,@PathVariable String folder , @PathVariable String type,@PathVariable String value) {
         try{
             return ResponseEntity.ok(se.filter(account, folder , type , value));
         }catch (Exception w ){

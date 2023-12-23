@@ -3,20 +3,19 @@ package com.example.mailServer.mail.services.FilterEmail;
 import java.util.ArrayList;
 
 public class CriteriaFactory {
-    static final int FIRSTELEMENT = 0;
-    public ICriteria getCriteria(String criteriaName, ArrayList<String> criteriaValue){
+    public ICriteria getCriteria(String criteriaName, String criteriaValue){
         if (criteriaName == null)
             return null;
         else if (criteriaName.equalsIgnoreCase("DATETIME"))
-            return new CriteriaDateTime(criteriaValue.get(FIRSTELEMENT));
+            return new CriteriaDateTime(criteriaValue);
         else if (criteriaName.equalsIgnoreCase("PRIORITY"))
-            return new CriteriaPriority(Integer.parseInt(criteriaValue.get(FIRSTELEMENT)));
+            return new CriteriaPriority(Integer.parseInt(criteriaValue));
         else if (criteriaName.equalsIgnoreCase("RECIEVER"))
             return new CriteriaReciever(criteriaValue);
         else if (criteriaName.equalsIgnoreCase("SENDER"))
-            return new CriteriaSender(criteriaValue.get(FIRSTELEMENT));
+            return new CriteriaSender(criteriaValue);
         else if (criteriaName.equalsIgnoreCase("SUBJECT"))
-            return new CriteriaSubject(criteriaValue.get(FIRSTELEMENT));
+            return new CriteriaSubject(criteriaValue);
         else
             return null;
     }
