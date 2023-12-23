@@ -1,5 +1,7 @@
 package com.example.mailServer.mail.services.Email;
 
+import com.example.mailServer.mail.services.Attachment;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +16,7 @@ public class Email {
     //optional params
     private String subject;
     private String body;
-    private List<String> attatchments;
+    private List<Attachment> attatchments;
     private int priority;
     private boolean isRead ;
 
@@ -55,9 +57,6 @@ public class Email {
         this.body = body;
     }
 
-    public void setAttatchments(List<String> attatchments) {
-        this.attatchments = attatchments;
-    }
 
     public void setPriority(int priority) {
         this.priority = priority;
@@ -84,15 +83,19 @@ public class Email {
         return subject;
     }
 
+    public List<Attachment> getAttatchments() {
+        return attatchments;
+    }
+
+    public void setAttatchments(List<Attachment> attatchments) {
+        this.attatchments = attatchments;
+    }
 
     public String getBody() {
         return body;
     }
 
 
-    public List<String> getAttatchments() {
-        return attatchments;
-    }
 
     public int getPriority() {
         return priority;
