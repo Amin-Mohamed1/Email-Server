@@ -18,6 +18,9 @@ public class CriteriaFactory {
             return new CriteriaSubject(criteriaValue);
         else if (criteriaName.equalsIgnoreCase("BODY"))
             return new CriteriaBody(criteriaValue);
+        else if (criteriaName.equalsIgnoreCase("ALL"))
+            return new OrCriteria(new CriteriaBody(criteriaValue), new CriteriaSubject(criteriaValue),
+                                  new CriteriaReciever(criteriaValue), new CriteriaDateTime(criteriaValue));
         else
             return null;
     }
