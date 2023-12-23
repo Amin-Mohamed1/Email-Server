@@ -34,17 +34,17 @@ public class Data {
 
     public void saveToJson() throws IOException {
         try {
-            String path ="..\\..\\..\\..\\..\\..\\..\\users.json";
+            String path ="E:\\material\\2nd year\\1st semester\\programming2\\mail server\\backend\\Email-Server\\users.json";
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(new File(path), users);
-            loadToJson();
+            //loadToJson();
         }catch (IOException e){
             e.printStackTrace();
         }
     }
     public ArrayList<User> loadToJson() throws IOException {
         try {
-            String path ="..\\..\\..\\..\\..\\..\\..\\users.json";
+            String path ="E:\\material\\2nd year\\1st semester\\programming2\\mail server\\backend\\Email-Server\\users.json";
             ObjectMapper mapper = new ObjectMapper();
 
             setUsers(mapper.readValue(new File(path), new TypeReference<ArrayList<User>>(){}));

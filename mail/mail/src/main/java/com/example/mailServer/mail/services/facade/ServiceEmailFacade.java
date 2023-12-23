@@ -47,16 +47,45 @@ public class ServiceEmailFacade {
             d.saveToJson();
         }
     }
-    public List<Email> makeRead (String account , int id  ){
+    public List<Email> makeRead (String account , int id  ) throws IOException {
         User u = DataHelper.getUserByAccount(account) ;
         for(Email e : u.getFolders().get(0).getEmails()){
             if(e.getId() == id ){
                 e.setRead(true);
+                d.saveToJson();
                 return  u.getFolders().get(0).getEmails() ;
             }
         }
         return  null ;
     }
+    public List<Email> saveAsDraft(EmailBuilder e ) throws IOException {
+        Email email = e.build();
+        User u = DataHelper.getUserByAccount(email.getSender());
+        if(u != null){
+            email.setRead(true);
+            email.setId(u.getIdMessage());
+            u.addEmailToFolder("draft", email);
+            u.setIdMessage(u.getIdMessage()+1);
+            d.saveToJson();
+            return u.getFolders().get(1).getEmails() ;
+        }
+        return null ;
+    }
+    public List<Email> modifyDraft(EmailBuilder e ) throws IOException {
+        Email email = e.build();
+        User u = DataHelper.getUserByAccount(email.getSender());
+        if(u != null){
+            for(int i = 0 ; i < u.getFolders().get(1).getEmails().size() ; ++i ){
+                if(u.getFolders().get(1).getEmails().get(i).getId() == e.getId()){
+                    u.getFolders().get(1).getEmails().set(i , email) ;
+                    d.saveToJson();
+                    return u.getFolders().get(1).getEmails() ;
+                }
+            }
+        }
+        return null ;
+    }
+
 
 
     public ArrayList<Email> filter (String account , String type ,ArrayList<String> criteriaValue){

@@ -82,6 +82,15 @@ public class control {
 
         }
     }
+    @GetMapping("/showContact/{account}")
+    public ResponseEntity<ArrayList<Contact>> showContact(@PathVariable String account) {
+        try {
+            return ResponseEntity.ok(s.showContact(account));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+    }
 
     @PostMapping("/sendEmail")
     public ResponseEntity<String> sendEmail(@RequestBody EmailBuilder e) {
@@ -102,6 +111,26 @@ public class control {
 
         }
     }
+    @PostMapping("/saveDraft")
+    public ResponseEntity<List<Email>> saveDraft(@RequestBody EmailBuilder e) {
+        try {
+            return ResponseEntity.ok(se.saveAsDraft(e));
+        } catch (Exception w) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+    }
+    @PostMapping("/modifyDraft")
+    public ResponseEntity<List<Email>> modifyDraft(@RequestBody EmailBuilder e) {
+        try {
+            return ResponseEntity.ok(se.modifyDraft(e));
+        } catch (Exception w) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+    }
+
+
 
     @PostMapping("/filter/{account}/{type}/{value}")
     public ResponseEntity<ArrayList<Email>> filter(@PathVariable String account, @PathVariable String type,@PathVariable ArrayList<String> value) {
@@ -121,16 +150,5 @@ public class control {
         }
     }
 
-
-
-
 }
 
-//    @GetMapping("/load")
-//    public ResponseEntity<ArrayList<User>> load () throws IOException {
-//       // System.out.println("loaaaad");
-//     //   System.out.println(d.loadToJson().get(0).getUsername());
-//        if(d.loadToJson()!=null)
-//            return ResponseEntity.ok(d.loadToJson());
-//        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-//    }

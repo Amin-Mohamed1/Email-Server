@@ -57,5 +57,9 @@ public class ServiceUserFacade {
         }
         return u.getContacts() ;
     }
+    public ArrayList<Contact> showContact(String account){
+        User u = DataHelper.getUserByAccount(account) ;
+        return u.getContacts() ;
+    }
 
 }
