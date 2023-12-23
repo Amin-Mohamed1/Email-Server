@@ -16,6 +16,8 @@ public class CriteriaFactory {
             return new CriteriaSender(criteriaValue);
         else if (criteriaName.equalsIgnoreCase("SUBJECT"))
             return new CriteriaSubject(criteriaValue);
+        else if (criteriaName.equalsIgnoreCase("BODY"))
+            return new CriteriaBody(criteriaValue);
         else
             return null;
     }

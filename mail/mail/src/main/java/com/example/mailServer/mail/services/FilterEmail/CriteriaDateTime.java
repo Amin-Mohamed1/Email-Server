@@ -12,7 +12,7 @@ public class CriteriaDateTime implements ICriteria{
         ArrayList<Email> dateTimeEmails = new ArrayList<Email>();
 
         for (Email email : emails) {
-            if(email.getDateTime().toLowerCase().startsWith(this.dateTime.toLowerCase())){
+            if(email.getDateTime().toLowerCase().contains(this.dateTime.toLowerCase())){
                 dateTimeEmails.add(email);
             }
         }

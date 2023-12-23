@@ -14,7 +14,7 @@ public class CriteriaReciever implements ICriteria{
 
         for (Email email : emails) {
             for(String reciever : email.getRecievers()){
-                if(reciever.toLowerCase().startsWith(this.recievers.toLowerCase())){
+                if(reciever.toLowerCase().contains(this.recievers.toLowerCase())){
                     if(!recieverEmails.contains(email))
                         recieverEmails.add(email);
                 }

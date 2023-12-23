@@ -12,7 +12,7 @@ public class CriteriaSubject implements ICriteria{
         ArrayList<Email> subjectEmails = new ArrayList<Email>();
 
         for (Email email : emails) {
-            if(email.getSubject().toLowerCase().startsWith(this.subject.toLowerCase())){
+            if(email.getSubject().toLowerCase().contains(this.subject.toLowerCase())){
                 subjectEmails.add(email);
             }
         }
