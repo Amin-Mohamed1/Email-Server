@@ -142,10 +142,19 @@ public class control {
 
 
 
-    @PostMapping("/filter/{account}/{type}/{value}")
-    public ResponseEntity<ArrayList<Email>> filter(@PathVariable String account, @PathVariable String type,@PathVariable ArrayList<String> value) {
+    @PostMapping("/search/{account}/{type}/{value}")
+    public ResponseEntity<ArrayList<Email>> search(@PathVariable String account, @PathVariable String type,@PathVariable ArrayList<String> value) {
         try{
-            return ResponseEntity.ok(se.filter(account , type , value));
+            return ResponseEntity.ok(se.search(account , type , value));
+        }catch (Exception w ){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @PostMapping("/filter/{account}/{folder}/{type}/{value}")
+    public ResponseEntity<ArrayList<Email>> filter(@PathVariable String account,@PathVariable String folder , @PathVariable String type,@PathVariable ArrayList<String> value) {
+        try{
+            return ResponseEntity.ok(se.filter(account, folder , type , value));
         }catch (Exception w ){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
