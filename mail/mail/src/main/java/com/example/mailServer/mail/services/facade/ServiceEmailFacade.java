@@ -88,7 +88,24 @@ public class ServiceEmailFacade {
 
 
 
-    public ArrayList<Email> filter (String account , String type ,ArrayList<String> criteriaValue){
+    public ArrayList<Email> filter (String account ,String folder , String type ,ArrayList<String> criteriaValue){
+        User u = DataHelper.getUserByAccount(account) ;
+        ArrayList<Email> emails = new ArrayList<>() ;
+        for(Folder f : u.getFolders()){
+            if(f.getName().equals(folder)){
+                for(Email e : f.getEmails()){
+                    if(!emails.contains(e))
+                        emails.add(e) ;
+                }
+            }
+        }
+        
+        CriteriaFactory factory = new CriteriaFactory() ;
+        ICriteria criteria = factory.getCriteria(type ,criteriaValue ) ;
+        return criteria.meetCriteria(emails) ;
+    }
+
+    public ArrayList<Email> search (String account , String type ,ArrayList<String> criteriaValue){
         User u = DataHelper.getUserByAccount(account) ;
         ArrayList<Email> emails = new ArrayList<>() ;
         for(Folder f : u.getFolders()){
