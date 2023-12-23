@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @CrossOrigin("*")
@@ -92,6 +93,16 @@ public class control {
 
         }
     }
+    @PostMapping("/makeRead/{account}/{id}")
+    public ResponseEntity<List<Email>> makeRead(@PathVariable String account , @PathVariable int id ) {
+        try {
+            return ResponseEntity.ok(se.makeRead(account,id));
+        } catch (Exception w) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+    }
+
     @PostMapping("/filter/{account}/{type}/{value}")
     public ResponseEntity<ArrayList<Email>> filter(@PathVariable String account, @PathVariable String type,@PathVariable ArrayList<String> value) {
         try{

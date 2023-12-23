@@ -18,6 +18,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class ServiceEmailFacade {
@@ -27,26 +28,34 @@ public class ServiceEmailFacade {
     }
     public void sendEmail(EmailBuilder e) throws IOException, ParseException {
         Email email = e.build();
-        //email.setRead(true);
         User s = DataHelper.getUserByAccount(email.getSender());
-        if (s instanceof Acceptable) {
+        if (s != null) {
+            email.setRead(true);
+            email.setId(s.getIdMessage());
             s.addEmailToFolder("sent", email);
-//            System.out.println(email.getRecievers().get(0));
-//            String ema = email.getRecievers().get(0) ;
-//            System.out.println("bola hany");
-//            System.out.println(ema);
-//            if(ema.equals("rafy@gmail.com"))
-//                System.out.println("equallllllll");
-//            User r = DataHelper.getUserByAccount(ema) ;
-//            if (r != null) {
-//                r.addEmailToFolder("inbox",email);
-//            }
+            s.setIdMessage(s.getIdMessage()+1);
             for (int i = 0; i < email.getRecievers().size(); i++) {
                 User r = DataHelper.getUserByAccount(email.getRecievers().get(i));
-                r.addEmailToFolder("inbox", email);
+                if(r != null){
+                    Email email2 = e.build();
+                    email2.setRead(false);
+                    email2.setId(r.getIdMessage());
+                    r.addEmailToFolder("inbox", email2);
+                    r.setIdMessage(r.getIdMessage()+1);
+                }
             }
             d.saveToJson();
         }
+    }
+    public List<Email> makeRead (String account , int id  ){
+        User u = DataHelper.getUserByAccount(account) ;
+        for(Email e : u.getFolders().get(0).getEmails()){
+            if(e.getId() == id ){
+                e.setRead(true);
+                return  u.getFolders().get(0).getEmails() ;
+            }
+        }
+        return  null ;
     }
 
 
