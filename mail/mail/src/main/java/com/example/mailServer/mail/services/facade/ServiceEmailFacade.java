@@ -118,4 +118,13 @@ public class ServiceEmailFacade {
         return strategy.doOperation(emails, sortingOrder);
 
     }
+    public List<Email> getEmails(String account , String folder){
+        User u = DataHelper.getUserByAccount(account) ;
+        for(Folder f : u.getFolders()){
+            if(f.getName().equals(folder)) {
+                return f.getEmails() ;
+            }
+        }
+        return null ;
+    }
 }

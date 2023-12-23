@@ -59,7 +59,7 @@ public class EmailBuilder{
         return attatchments;
     }
 
-    
+
 
     public int getPriority() {
         return priority;

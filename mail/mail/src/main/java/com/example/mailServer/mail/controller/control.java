@@ -129,6 +129,16 @@ public class control {
 
         }
     }
+    @PostMapping("/getEmails/{account}/{folder}")
+    public ResponseEntity<List<Email>> getEmails(@PathVariable String account , @PathVariable String folder) {
+        try {
+            return ResponseEntity.ok(se.getEmails(account, folder));
+        } catch (Exception w) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+    }
+
 
 
 
