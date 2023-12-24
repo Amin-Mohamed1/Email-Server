@@ -174,6 +174,19 @@ public class ServiceEmailFacade {
         }
         return null ;
     }
+    public List<Email> editPriority(String account , int id , int priority) throws IOException {
+        User u = DataHelper.getUserByAccount(account);
+        if(u != null){
+            for(Email e : u.getFolders().get(0).getEmails()){
+                if(e.getId() == id){
+                    e.setPriority(priority);
+                    d.saveToJson();
+                    return u.getFolders().get(0).getEmails() ;
+                }
+            }
+        }
+        return null ;
+    }
 
 
     public ArrayList<Email> filter (String account ,String folder , String type ,String criteriaValue){

@@ -167,6 +167,15 @@ public class control {
 
         }
     }
+    @PostMapping("/editPriority/{account}/{id}/{priority}")
+    public ResponseEntity<List<Email>> editPriority(@PathVariable String account ,@PathVariable int id  , @PathVariable int priority ) {
+        try {
+            return ResponseEntity.ok(se.editPriority(account, id, priority));
+        } catch (Exception w) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+    }
 
 
 
