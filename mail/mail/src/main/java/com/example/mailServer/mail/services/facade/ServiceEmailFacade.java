@@ -73,6 +73,7 @@ public class ServiceEmailFacade {
     }
     public List<Email> modifyDraft(EmailBuilder e ) throws IOException {
         Email email = e.build();
+        email.setRead(true);
         User u = DataHelper.getUserByAccount(email.getSender());
         if(u != null){
             for(int i = 0 ; i < u.getFolders().get(1).getEmails().size() ; ++i ){
@@ -85,6 +86,34 @@ public class ServiceEmailFacade {
         }
         return null ;
     }
+    public List<Email> sendDraftToSent(EmailBuilder e) throws IOException{
+        Email email = e.build();
+        email.setRead(true);
+        User u = DataHelper.getUserByAccount(email.getSender());
+        if(u != null){
+            for(int i = 0 ; i < u.getFolders().get(1).getEmails().size() ; ++i ){
+                if(u.getFolders().get(1).getEmails().get(i).getId() == e.getId()) {
+                    u.getFolders().get(1).getEmails().remove(i);
+                    break ;
+                }
+            }
+            u.addEmailToFolder("sent", email) ;
+            for (int i = 0; i < email.getRecievers().size(); i++) {
+                User r = DataHelper.getUserByAccount(email.getRecievers().get(i));
+                if(r != null){
+                    Email email2 = e.build();
+                    email2.setRead(false);
+                    email2.setId(r.getIdMessage());
+                    r.addEmailToFolder("inbox", email2);
+                    r.setIdMessage(r.getIdMessage()+1);
+                }
+            }
+            d.saveToJson();
+            return u.getFolders().get(1).getEmails() ;
+        }
+        return null ;
+    }
+
 
 
 

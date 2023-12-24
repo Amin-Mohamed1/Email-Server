@@ -129,6 +129,17 @@ public class control {
 
         }
     }
+    @PostMapping("/sendDraftToInbox")
+    public ResponseEntity<List<Email>> sendDraftToInbox(@RequestBody EmailBuilder e) {
+        try {
+            return ResponseEntity.ok(se.sendDraftToSent(e));
+        } catch (Exception w) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+    }
+
+
     @PostMapping("/getEmails/{account}/{folder}")
     public ResponseEntity<List<Email>> getEmails(@PathVariable String account , @PathVariable String folder) {
         try {
