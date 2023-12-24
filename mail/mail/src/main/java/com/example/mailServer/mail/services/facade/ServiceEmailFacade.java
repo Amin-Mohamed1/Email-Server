@@ -113,9 +113,51 @@ public class ServiceEmailFacade {
         }
         return null ;
     }
+    public List<Email> deleteEmail(String account , String folder , int [] id) throws IOException {
+        if(folder.equals("inbox"))
+            return deleteFromInbox(account, id) ;
+        return deleteFromAnyFolder(account, folder, id);
+    }
+    public List<Email> deleteFromAnyFolder(String account , String folder , int [] id) throws IOException {
+        User u = DataHelper.getUserByAccount(account);
+        if(u != null){
+            for(Folder f : u.getFolders()){
+                if(f.getName().equals(folder)){
+                    for(int i = 0 ; i < id.length ; i++ ){
+                        for (int k = 0 ; k < f.getEmails().size() ; k++){
+                            if(f.getEmails().get(k).getId() == id[i]){
+                                f.getEmails().remove(k) ;
+                                break ;
+                            }
+                        }
+                    }
+                    d.saveToJson();
+                    return f.getEmails() ;
+                }
+            }
 
+        }
+        return null ;
 
-
+    }
+    public List<Email> deleteFromInbox (String account , int [] id) throws IOException {
+        User u = DataHelper.getUserByAccount(account);
+        if(u != null){
+            for(int i = 0 ; i < id.length ; i++){
+                for (int j = 0 ; j < u.getFolders().get(0).getEmails().size() ; j++){
+                    if(u.getFolders().get(0).getEmails().get(j).getId() == id[i] ){
+                        u.getFolders().get(3).addEmail(u.getFolders().get(0).getEmails().get(j));
+                        u.getFolders().get(0).getEmails().remove(j);
+                        break ;
+                    }
+                }
+            }
+            d.saveToJson();
+            return u.getFolders().get(0).getEmails() ;
+        }
+        return null ;
+    }
+    
 
     public ArrayList<Email> filter (String account ,String folder , String type ,String criteriaValue){
         User u = DataHelper.getUserByAccount(account) ;

@@ -149,6 +149,15 @@ public class control {
 
         }
     }
+    @DeleteMapping("/delete/{account}/{folder}")
+    public ResponseEntity<List<Email>> delete(@RequestBody int [] id , @PathVariable String account , @PathVariable String folder) {
+        try {
+            return ResponseEntity.ok(se.deleteEmail(account, folder, id));
+        } catch (Exception w) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+    }
 
 
 
