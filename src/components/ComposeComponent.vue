@@ -101,20 +101,45 @@ export default {
         console.error('Error converting files to base64:', error);
       }
     },
-convertToBase64(file) {
-    return new Promise((resolve, reject) => {
+    convertToBase64(file) {
+      return new Promise((resolve, reject) => {
         const reader = new FileReader();
 
-        reader.onload = () => resolve({
+        reader.onload = () => {
+          const base64String = reader.result.split(',')[1];
+          console.log('Base64:', base64String);  // Log the Base64 string
+          resolve({
             name: file.name,
             type: file.type,
-            format: reader.result.split(',')[1],
-        });
-        reader.onerror = error => reject(error);
+            format: base64String,
+          });
+        };
+
+        reader.onerror = error => {
+          console.error('FileReader Error:', error);
+          reject(error);
+        };
 
         reader.readAsDataURL(file);
-    });
-},
+      });
+    },
+
+
+
+// convertToBase64(file) {
+//     return new Promise((resolve, reject) => {
+//         const reader = new FileReader();
+
+//         reader.onload = () => resolve({
+//             name: file.name,
+//             type: file.type,
+//             format: reader.result.split(',')[1],
+//         });
+//         reader.onerror = error => reject(error);
+
+//         reader.readAsDataURL(file);
+//     });
+// },
 
     async submitForm() {
       const validEmailDomains = ['@gmail.com', '@alexu.edu.eg'];
@@ -172,7 +197,18 @@ convertToBase64(file) {
       console.log('From:', this.profileContactInfo);
       console.log('Subject:', this.subject);
       console.log('Sending email with body:', this.body);
-      console.log('Attachments:', this.attachments);
+      console.log('Attachments:');
+      for (const attachment of this.attachments) {
+        console.log(attachment);
+      }
+
+      // console.log('Attachments:', this.attachments[0]);
+
+      // for (const attachment of this.attachments) {
+      //   this.downloadAttachment(attachment.name, attachment.format);
+      // }
+
+
       const currentDate = new Date();
       const formattedDateTime = format(currentDate, "yyyy-MM-dd h:mm a");
       this.dateTime = formattedDateTime;
@@ -201,6 +237,7 @@ convertToBase64(file) {
         if (response.ok) {
           // localStorage.setItem('emailData', JSON.stringify(emailData));
           console.log('Email sent successfully');
+          console.log('Server Response:', response);
           alert('Email sent successfully');
         } else {
           console.error('Failed to send email');
@@ -211,6 +248,21 @@ convertToBase64(file) {
         alert('Error sending email');
       }
     },
+
+    // downloadAttachment(name, base64Data) {
+    //   // Create an anchor element to trigger the download
+    //   const link = document.createElement('a');
+    //   link.href = `data:${base64Data}`;
+    //   link.download = name;
+
+    //   // Append the anchor to the body and programmatically click it to trigger the download
+    //   document.body.appendChild(link);
+    //   link.click();
+
+    //   // Remove the anchor from the body
+    //   document.body.removeChild(link);
+    // },
+    
     openAddUserModal() {
       this.showAddUserModal = true;
     },
