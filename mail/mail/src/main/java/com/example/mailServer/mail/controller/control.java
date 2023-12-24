@@ -167,6 +167,36 @@ public class control {
 
         }
     }
+    @GetMapping("/addFolder/{account}/{folder}")
+    public ResponseEntity<String> addFolder( @PathVariable String account ,@PathVariable String folder ) {
+        try {
+            return ResponseEntity.ok(se.addNewFolder(account , folder));
+        } catch (Exception w) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+    }
+    @PostMapping("/moveEmails/{account}/{folder}")
+    public ResponseEntity<List<Email>> moveEmailsToFolder(@RequestBody int[] id , @PathVariable String account ,@PathVariable String folder ) {
+        try {
+            return ResponseEntity.ok(se.moveEmailsToFolder(account, folder, id));
+        } catch (Exception w) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+    }
+    @DeleteMapping("/deleteFolder/{account}/{folder}")
+    public ResponseEntity<String> moveEmailsToFolder( @PathVariable String account ,@PathVariable String folder ) {
+        try {
+            return ResponseEntity.ok(se.deleteFolder(account, folder));
+        } catch (Exception w) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+    }
+
+
+
     @PostMapping("/editPriority/{account}/{id}/{priority}")
     public ResponseEntity<List<Email>> editPriority(@PathVariable String account ,@PathVariable int id  , @PathVariable int priority ) {
         try {

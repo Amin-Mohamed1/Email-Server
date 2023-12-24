@@ -187,6 +187,48 @@ public class ServiceEmailFacade {
         }
         return null ;
     }
+    public String addNewFolder(String account , String folder) throws IOException {
+        User u = DataHelper.getUserByAccount(account);
+        if(u != null){
+            u.addFolder(folder);
+            d.saveToJson();
+            return "added" ;
+        }
+        return "not added" ;
+    }
+    public List<Email> moveEmailsToFolder(String account , String folder , int[] id) throws IOException {
+        User u = DataHelper.getUserByAccount(account);
+        if(u != null){
+            for(int i = 0 ; i < id.length ; ++i ){
+                for(Email e : u.getFolders().get(0).getEmails()){
+                    if(e.getId() == id[i]){
+                        Email copy = e.clone() ;
+                        copy.setId(u.getIdMessage());
+                        u.addEmailToFolder(folder , copy);
+                        u.setIdMessage(u.getIdMessage() + 1 );
+                        break ;
+                    }
+                }
+            }
+            d.saveToJson();
+            return u.getFolders().get(0).getEmails() ;
+        }
+        return null ;
+    }
+    public String deleteFolder(String account , String folder) throws IOException {
+        User u = DataHelper.getUserByAccount(account);
+        if(u != null){
+            for(int i = 0 ; i < u.getFolders().size() ; i++){
+                if(u.getFolders().get(i).getName().equals(folder)){
+                    u.getFolders().remove(i) ;
+                    d.saveToJson() ;
+                    return "deleted folder" ;
+                }
+            }
+        }
+        return null ;
+    }
+
 
 
     public ArrayList<Email> filter (String account ,String folder , String type ,String criteriaValue){
