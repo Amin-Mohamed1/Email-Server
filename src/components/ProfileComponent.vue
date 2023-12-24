@@ -17,6 +17,12 @@
       </div>
 
       <nav class="nav-links">
+
+          <router-link to="/profile/search" class="nav-link" style="color: #0e5809;" active-class="router-link-active">
+            <i class="fas fa-search animated-icon"></i> Search
+          </router-link>
+
+
           <router-link to="/profile/compose" class="nav-link" style="color: #3498db;" active-class="router-link-active">
             <i class="fas fa-pen animated-icon"></i> Compose
           </router-link>
@@ -41,7 +47,7 @@
             <i class="fas fa-trash animated-icon"></i> Trash
           </router-link>
 
-          <router-link to="/profile/folders" class="nav-link" style="color: #0a1e78;" active-class="router-link-active">
+          <router-link to="/profile/folders" class="nav-link" style="color: #7782b2;" active-class="router-link-active">
             <i class="fas fa-folder animated-icon"></i> Folders
           </router-link>
 
@@ -68,7 +74,8 @@
 <script setup>
 import { useRouter } from 'vue-router';
 import { onMounted, ref } from 'vue';
-// import FilterComponent from './FilterComponent.vue';
+import FilterComponent from './FilterComponent.vue';
+const router = useRouter();
 const isSidebarExpanded = ref(false);
 const username = ref('');
 const email = ref('');

@@ -1,28 +1,18 @@
 <template>
   <div>
-    <h2 class="inbox-title"><i class="fa-solid fa-inbox"></i> Inbox</h2>
+    <h2 class="inbox-title">Inbox</h2>
     <div class="search-bars-container">
-      <div class="search-bar">
-        <select v-model="searchCategory" class="search-category">
-          <option value="sender">Sender</option>
-          <option value="body">Body</option>
-          <option value="date">Date</option>
-          <option value="date">Attachments</option>
-          <option value="subject">Subject</option>
-        </select>
-        <input v-model="searchQuery" type="text" placeholder="Search Query...">
-        <button @click="search" class="search-btn">
-          <i class="fas fa-search"></i>
-        </button>
-      </div>
-
       <div class="sort-bar">
         <select v-model="sortCategory" class="sort-category">
-          <option value="sender">Sender</option>
+          <option value="dateTime">Date</option>
           <option value="priority">Priority</option>
+          <option value="sender">Sender</option>
           <option value="subject">Subject</option>
         </select>
-        <i class="fas fa-sort-alpha-down sort-icon" :class="{ 'rotate-icon': sortOrder === 'asc' }"></i>
+        <div class="sort-icons">
+        <i class="fas fa-sort-alpha-down sort-icon" :class="{ 'rotate-icon': sortOrder === 'asc' }" @click="sortEmails('asc')"></i>
+        <i class="fas fa-sort-alpha-up sort-icon" :class="{ 'rotate-icon': sortOrder === 'desc' }" @click="sortEmails('desc')"></i>
+        </div>
       </div>
 
       <div class="filter-bar">
@@ -33,14 +23,20 @@
         </select>
         <input v-model="filterQuery" type="text" placeholder="Filter Query...">
         <button @click="filter" class="filter-btn">
-          <i class="fas fa-filter"></i>
+          <i class="fas fa-filter" @click="filterEmails"></i>
         </button>
       </div>
 
     </div>
 
+
     <transition-group name="fade" mode="out-in">
-      <div v-for="email in displayedEmails" :key="email.id" class="email-item" @click="expandBody(email)">
+        <div
+          v-for="email in displayedEmails"
+          :key="email.id"
+          :class="{ 'email-item': true, 'unread-email': !email.read }"
+          @click="showEmailDetails(email)"
+        >
         <div class="info">
           <div class="sender">{{ email.sender }}</div>
           <div class="date-time">{{ email.dateTime }}</div>
@@ -48,31 +44,61 @@
         <div class="subject">{{ email.subject }}</div>
         <div class="body">
           <div v-if="!email.expanded" class="truncated-body">
-            {{ truncateBody(email.body) }}
+            {{ truncateBody(email.body, 120) }}
             <span v-if="shouldTruncate(email.body)">
-              ... <span @click.stop="expandBody(email)">See more</span>
+            <span @click.stop="showEmailDetails(email)">See more</span>
             </span>
           </div>
           <div v-else>
             {{ email.body }}
             <span @click.stop="expandBody(email)">See less</span>
           </div>
-          <div v-if="hasAttachment(email.attachments)" class="attachment-section">
-            <strong class="attachment-label">Attachments:</strong>
-            <ul>
-              <li v-for="(attachment, index) in email.attachments" :key="index">
-                {{ getAttachmentIcon(attachment.type) }} <strong>{{ attachment.name }}</strong>
-              </li>
-            </ul>
+            <div v-if="hasAttachment(email.attachments)" class="attachment-section">
+              <strong class="attachment-label">Attachments:</strong>
+              <ul>
+                <li v-for="(attachment, index) in email.attachments" :key="index">
+                  {{ getAttachmentIcon(attachment) }} <strong>{{ attachment }}</strong>
+                </li>
+              </ul>
+            </div>
+            <div v-else class="no-attachments">No attachments</div>
           </div>
-          <div v-else class="no-attachments">No attachments</div>
-        </div>
         <div class="meta">
           <div class="priority">Priority: {{ email.priority }}</div>
           <button @click.stop="deleteEmail(email.id)" class="delete-btn">Delete</button>
         </div>
       </div>
     </transition-group>
+
+    <div v-if="show" class="modal" >
+      <div class="modal-content">
+        <div class="info">
+          <div class="sender">{{ selectedEmail.sender }}</div>
+          <div class="date-time">{{ selectedEmail.dateTime }}</div>
+        </div>
+        <div class="subject">{{ selectedEmail.subject }}</div>
+        <div class="body">
+            {{ selectedEmail.body }}
+            <div v-if="hasAttachment(selectedEmail.attachments)" class="attachment-section">
+              <strong class="attachment-label">Attachments:</strong>
+              <ul>
+                <li v-for="(attachment, index) in selectedEmail.attachments" :key="index">
+                  {{ getAttachmentIcon(attachment) }} <strong>{{ attachment }}</strong>
+                </li>
+              </ul>
+            </div>
+            <div v-else class="no-attachments">No attachments</div>
+        </div>
+        <div class="meta">
+          <div class="priority">Priority: {{ selectedEmail.priority }}</div>
+          <button @click.stop="closeEmailDetails" class="close-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+
     <div class="pagination">
       <button @click="changePage('prev')" :disabled="currentPage === 1">Prev</button>
       <span>{{ currentPage }}</span>
@@ -82,32 +108,22 @@
 </template>
 
 <script setup>
-
 import { ref, onMounted, computed } from 'vue';
-import axios from 'axios';
 import { defineProps } from 'vue';
 
-let searchCategory = 'sender';
+
+const filterQuery = ref('');
 let defaultSortCategory = 'priority';
 let sortCategory = ref(defaultSortCategory);
-let defaultSortOrder = 'asc';
+let defaultSortOrder = 'desc';
 let sortOrder = ref(defaultSortOrder);
 let filterCategory = 'sender';
-const currentUserEmail = 'user@gmail.com';
 const emailsPerPage = 5;
-
+let selectedEmail= null;
 const props = defineProps(['profileContactInfo', 'Inboxemails']);
 
-const fetchEmails = async () => {
-  try {
-    const response = await axios.get(`http://localhost/emails/${currentUserEmail}`);
-    emails.value = response.data;
-  } catch (error) {
-    console.error('Error fetching emails:', error);
-  }
-};
-
 const emails = ref([]);
+
 props.Inboxemails.forEach((inboxEmail) => {
   const transformedEmail = {
     id: inboxEmail.id,
@@ -117,13 +133,156 @@ props.Inboxemails.forEach((inboxEmail) => {
     attachments: inboxEmail.attatchments || [],
     priority: inboxEmail.priority,
     dateTime: inboxEmail.dateTime,
+    read:inboxEmail.read,
   };
   emails.value.push(transformedEmail);
 });
 
+const hasAttachment = (attachments) => attachments && attachments.length > 0;
+let show = ref(false);
+const showEmailDetails = (email) => {
+    makeRead(email);
+    show.value = true;
+    selectedEmail = email;
+    console.log(selectedEmail);
+};
+const makeRead = async (email) => {
+  try {
+    const EmailAddress = props.profileContactInfo;
+    const response = await fetch(`http://localhost:8081/mail/makeRead/${EmailAddress}/${email.id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    emails.value = data;
+    console.log(data);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+const closeEmailDetails = () => {
+    show.value = false;
+    selectedEmail = null;
+};
+const getAttachmentIcon = (attachment) => {
+  if (attachment.endsWith('.jpeg') || attachment.endsWith('.png')  || attachment.endsWith('.jpg')  ) {
+    return '📷'; 
+  } else if (attachment.endsWith('.docx')) {
+    return '📃';
+  } else if (attachment.endsWith('.pdf')) {
+    return '📃';
+  } else {
+    return '📎';
+  }
+};
+
+const sortEmails = async (sortOrder) => {
+  try {
+    const EmailAddress = props.profileContactInfo;
+    const currentFolder = "inbox";
+    const orderSorting = sortOrder;
+    const sortingCategory = sortCategory;
+    const order = orderSorting === "asc" ? true : false;
+
+    const response = await fetch(`http://localhost:8081/mail/sortEmail/${EmailAddress}/${currentFolder}/${sortingCategory.value}/${order}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    emails.value = data;
+
+    console.log(data);
+  } catch (error) {
+    console.error('Error sorting emails:', error);
+  }
+};
+
+let filtering = false;
+const filterEmails = async () => {
+  try {
+    filtering = true;
+    const EmailAddress = props.profileContactInfo;
+    const currentFolder = "inbox";
+    const filteringCategory = filterCategory;
+    const filteringQuery = filterQuery;
+
+    console.log(" 1 " + currentFolder);
+    console.log(" 2" + EmailAddress);
+    console.log(" 3 " + filteringCategory);
+    console.log(" 4 " + filteringQuery);
+
+    const response = await fetch(`http://localhost:8081/mail/filter/${EmailAddress}/${currentFolder}/${filteringCategory}/${filteringQuery.value}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    emails.value = data;
+
+    console.log(data);
+  } catch (error) {
+    console.error('Error sorting emails:', error);
+  }
+};
+
+const fetchAndUpdateEmails = async () => {
+  if(filtering == false){
+    await fetchEmails();
+  }
+};
+
 onMounted(() => {
-  fetchEmails();
+  fetchAndUpdateEmails();
+  setInterval(fetchAndUpdateEmails, 2000);
 });
+
+
+const fetchEmails = async () => {
+  try {
+    const EmailAddress = props.profileContactInfo;
+    const currentFolder = "inbox";
+    console.log(EmailAddress +  " , "  + currentFolder);
+
+    const response = await fetch(`http://localhost:8081/mail/getEmails/${EmailAddress}/${currentFolder}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      mode: 'cors',
+      body: JSON.stringify({  }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    emails.value = data;
+    console.log("fetch ", data);
+  } catch (error) {
+    console.error('Error fetching emails:', error);
+  }
+};
 
 const currentPage = ref(1);
 const totalPages = computed(() => Math.ceil(emails.value.length / emailsPerPage));
@@ -133,25 +292,21 @@ const displayedEmails = computed(() => {
   return emails.value.slice(startIndex, endIndex);
 });
 const deleteEmail = (id) => {
+  console.log(id);
   emails.value = emails.value.filter(email => email.id !== id);
 };
+
 const shouldTruncate = (body) => body.length > 120;
-const truncateBody = (body) => shouldTruncate(body) ? body.slice(0, 120) : body;
+const truncateBody = (body, maxLength) => {
+  return body.length > maxLength ? body.slice(0, maxLength) + '...' : body;
+};
+//const truncateBody = (body) => shouldTruncate(body) ? body.slice(0, 120) : body;
+
 const expandBody = (email) => {
   email.expanded = !email.expanded;
 };
-const hasAttachment = (attachments) => attachments.length > 0;
-const getAttachmentIcon = (type) => {
-  if (type.toLowerCase() === 'pdf') {
-    return '📄'; // PDF icon
-  } else if (type.toLowerCase() === 'docx') {
-    return '📃'; // DOCX icon
-  } else if (type.toLowerCase() === 'jpg' || type.toLowerCase() === 'jpeg' || type.toLowerCase() === 'png') {
-    return '📷'; // Image icon
-  } else {
-    return '📎'; // Default attachment icon
-  }
-};
+
+
 const changePage = (direction) => {
   if (direction === 'prev' && currentPage.value > 1) {
     currentPage.value -= 1;
@@ -159,26 +314,21 @@ const changePage = (direction) => {
     currentPage.value += 1;
   }
 };
+
 </script>
 
 <style scoped>
 
-
-.sort-icon {
-  margin-top: 14px;
-}
-
-
 .search-bars-container {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 20px; /* Adjust this margin as needed */
+    margin-bottom: 20px; 
   }
 
   .inbox-title {
-    color: #187dc1;
-  font-size: 28px;
-  margin-bottom: 15px;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
   }
   
   .email-item {
@@ -319,22 +469,23 @@ ul {
 
   .sort-category {
     padding: 10px;
-    border: 1px solid #a3a3a3;
+    border: 1px solid #ffffff;
     border-radius: 4px;
-    background-color: #a3a3a3;
+    background-color: #ffffff;
     color: #000000;
     cursor: pointer;
     appearance: none;
-    width:170px;
+    width: 100px;
     -webkit-appearance: none;
     background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Add custom arrow icon */
     background-repeat: no-repeat;
-    background-position: right 10px center;
+    text-align: center;
+    background-position: left 70px bottom 10px; 
   }
 
   .sort-category:focus {
     outline: none;
-    border-color: #a3a3a3;
+    border-color: #ffffff;
   }
 
   .sort-bar,
@@ -349,9 +500,9 @@ ul {
     margin-left: 2px;
     margin-right: 2px;
     color: #000000;
-    background-color: #a3a3a3;
+    background-color: #ffffff;
     outline: none;
-    width:16%;
+    width:30%;
   }
 
   .sort-bar input {
@@ -387,22 +538,7 @@ ul {
   .sort-bar input:focus {
     border-color: #053a72;
   }
-
-  .search-bar{
-    display: flex;
-    margin-top: 20px;
-    transition: transform 0.3s;
-    margin-bottom: 20px;
-    margin-left: 2px;
-    margin-right: 2px;
-    width: 600px;
-    border: 1px solid #ffffff;
-    border-radius: 4px;
-    overflow: hidden;
-    width:45%;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  }
-    .filter-bar {
+  .filter-bar {
     display: flex;
     margin-top: 20px;
     transition: transform 0.3s;
@@ -413,35 +549,20 @@ ul {
     border: 1px solid #ffffff;
     border-radius: 4px;
     overflow: hidden;
-    width:30px;
+    width:90%;
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   }
 
 
-  .search-bar:hover, .filter-bar:hover {
+   .filter-bar:hover {
     transform: scale(1.05);
-  }
-
-  .search-category{
-    padding: 10px;
-    border: 1px solid #a3a3a3;
-    border-radius: 4px;
-    background-color: #a3a3a3;
-    color: #000000;
-    cursor: pointer;
-    appearance: none;
-    width:150px;
-    -webkit-appearance: none;
-    background-image: url('data:image/svg+xml;utf8,<svg fill="%23333" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Add custom arrow icon */
-    background-repeat: no-repeat;
-    background-position: right 10px center;
   }
 
    .filter-category {
     padding: 10px;
-    border: 1px solid #a3a3a3;
+    border: 1px solid #ffffff;
     border-radius: 4px;
-    background-color: #a3a3a3;
+    background-color: #ffffff;
     color: #000000;
     cursor: pointer;
     appearance: none;
@@ -453,31 +574,30 @@ ul {
   }
 
 
-  .search-category:focus, .filter-category:focus {
+ .filter-category:focus {
     outline: none;
-    border-color: #a3a3a3;
+    border-color: #ffffff;
   }
 
-  .search-bar,
-  .search-bar input, 
+
   .filter-bar,
   .filter-bar input
   {
     transition: border-color 0.3s;
   }
 
-  .search-bar , .filter-bar  {
+.filter-bar  {
     padding: 8px;
     border: 0px solid #ffffff;
     border-radius: 4px;
     margin-right: 10px;
     width:600px;
     color: #000000;
-    background-color: #a3a3a3;
+    background-color: #ffffff;
     outline: none;
   }
 
-  .search-bar input, .filter-bar input  {
+.filter-bar input  {
     flex: 1;
     padding: 8px;
     border: 1px solid #ffffff;
@@ -486,8 +606,7 @@ ul {
     color: #000000;
     outline: none;
   }
-
-  .search-bar .search-btn, .filter-bar .filter-btn {
+.filter-bar .filter-btn {
     background-color: #007BFF;
     color: #fff;
     border: none;
@@ -498,19 +617,78 @@ ul {
     outline: none;
   }
 
-  .search-bar .search-btn i, .filter-bar .filter-btn i  {
+ .filter-bar .filter-btn i  {
     font-size: 18px;
   }
 
-  .search-bar .search-input::placeholder , .filter-bar .filter-input::placeholder {
+ .filter-bar .filter-input::placeholder {
     color: #007BFF;
   }
 
-  .search-bar,
-  .search-bar input:focus, .filter-bar,
+  .filter-bar,
   .filter-bar input:focus{
     border-color: #053a72;
   }
+.sort-icons {
+  display: flex;
+  align-items: center;
+}
+
+.sort-icon {
+  margin-top: 10px;
+  margin-right: 0px; 
+  margin-left: 70px; 
+}
+
+.rotate-icon {
+  transform: rotate(180deg);
+}
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+.close-btn {
+  margin-left: 10px;
+  cursor: pointer;
+  padding: 8px 12px;
+  border: 1px solid #e74c3c;
+  background-color: #fff;
+  color: #e74c3c;
+  border-radius: 3px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.close-btn:hover {
+  background-color: #e74c3c;
+  color: #fff;
+}
+
+
+.modal-content,
+.close-btn {
+  transition: background-color 0.3s, color 0.3s;
+}
+.unread-email {
+  font-weight: bold;
+  background-color: #e2e2e2;
+  border-left: 4px solid #170cab;
+}
 
 </style>
   
