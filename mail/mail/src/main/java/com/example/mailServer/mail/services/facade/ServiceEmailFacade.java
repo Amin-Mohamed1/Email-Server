@@ -157,7 +157,24 @@ public class ServiceEmailFacade {
         }
         return null ;
     }
-    
+    public List<Email> restoreFromTrash (String account , int [] id) throws IOException {
+        User u = DataHelper.getUserByAccount(account);
+        if(u != null){
+            for(int i = 0 ; i < id.length ; i++){
+                for (int j = 0 ; j < u.getFolders().get(3).getEmails().size() ; j++){
+                    if(u.getFolders().get(3).getEmails().get(j).getId() == id[i] ){
+                        u.getFolders().get(0).addEmail(u.getFolders().get(3).getEmails().get(j));
+                        u.getFolders().get(3).getEmails().remove(j);
+                        break ;
+                    }
+                }
+            }
+            d.saveToJson();
+            return u.getFolders().get(3).getEmails() ;
+        }
+        return null ;
+    }
+
 
     public ArrayList<Email> filter (String account ,String folder , String type ,String criteriaValue){
         User u = DataHelper.getUserByAccount(account) ;

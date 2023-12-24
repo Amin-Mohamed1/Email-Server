@@ -158,6 +158,15 @@ public class control {
 
         }
     }
+    @PostMapping("/restoreEmail/{account}")
+    public ResponseEntity<List<Email>> restoreFromTrash(@RequestBody int [] id , @PathVariable String account ) {
+        try {
+            return ResponseEntity.ok(se.restoreFromTrash(account , id));
+        } catch (Exception w) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+    }
 
 
 
