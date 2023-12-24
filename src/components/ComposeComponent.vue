@@ -4,13 +4,13 @@
       <h2>
         <i class="fas fa-envelope"></i> Compose Email
       </h2>
-        <div class="input-group to-group">
+      <div class="input-group to-group">
         <label for="to">
           <i class="fas fa-users"></i> To:
         </label>
-        <div class="to-info" >
+        <div class="to-info">
           <ul>
-            <li v-for="(user, index) in to" :key="index">
+            <li v-for="(user, index) in recievers" :key="index">
               <i class="fas fa-user"></i> {{ user.email }}
             </li>
           </ul>
@@ -18,25 +18,26 @@
             <i class="fas fa-plus"></i>
           </div>
         </div>
-        </div>
-      
-      
+      </div>
+
+
       <div class="input-group from-group">
         <label for="from">
           <i class="fas fa-user"></i> From:
         </label>
-        <input type="text" id="from" v-model="from" :placeholder="profileContactInfo" :readonly="true" />
+        <input type="text" id="from" v-model="sender" :placeholder="profileContactInfo" :readonly="true" />
       </div>
     </div>
 
     <div class="input-group subject-group">
-        <label for="subject">
-          <i class="fa-solid fa-pen"></i> Subject:
-        </label>
-        <input type="text" id="subject" v-model="subject" maxlength="30" placeholder="Enter subject here (max 30 characters)" required/>
-      </div>
+      <label for="subject">
+        <i class="fa-solid fa-pen"></i> Subject:
+      </label>
+      <input type="text" id="subject" v-model="subject" maxlength="30"
+        placeholder="Enter subject here (max 30 characters)" required />
+    </div>
 
-    <textarea v-model="emailBody" placeholder="Compose your email..." class="compose-textarea"></textarea>
+    <textarea v-model="body" placeholder="Compose your email..." class="compose-textarea"></textarea>
 
     <div v-if="showAddUserModal" class="modal">
       <div class="modal-content">
@@ -52,24 +53,14 @@
         <i class="fas fa-paperclip"></i> Choose Attachments:
       </label>
       <input type="file" id="attachments" multiple @change="handleFileUpload" class="file-input" />
-      <div v-if="attachments.length > 0">
-        <h3>
-          <i class="fas fa-paperclip"></i> Attachments:
-        </h3>
-        <ul>
-          <li v-for="(attachment, index) in attachments" :key="index">
-            <i class="fas fa-file"></i>{{ attachment }}
-          </li>
-        </ul>
-      </div>
     </div>
 
     <button @click="submitForm" class="send-button">
-    <i class="fas fa-paper-plane"></i> Send Email
-  </button>
+      <i class="fas fa-paper-plane"></i> Send Email
+    </button>
     <button @click="saveForm" class="send-button">
-        <i class="fas fa-file"></i> Save Draft
-      </button>
+      <i class="fas fa-file"></i> Save Draft
+    </button>
     <div>
       <p>{{ dateTime }}</p>
     </div>
@@ -84,48 +75,66 @@ export default {
   props: ['profileContactInfo'],
   data() {
     return {
-      from: '',
-      emailBody: '',
+      sender: 'profileContactInfo',
+      body: '',
       attachments: [],
       showAddUserModal: false,
       newUserEmail: '',
-      to: [],
+      recievers: [],
       subject: '',
       dateTime: '',
     };
   },
   mounted() {
-    this.from = this.profileContactInfo;
+    this.sender = this.profileContactInfo;
   },
   methods: {
-    handleFileUpload(event) {
+   async handleFileUpload(event) {
       const files = event.target.files;
-      this.attachments = Array.from(files).map(file => file.name);
-
-      this.fileBlobs = Array.from(files);
-
-      console.log(this.fileBlobs);
-    
+      try {
+        for (const file of files) {
+          const base64String = await this.convertToBase64(file);
+          this.attachments.push(base64String);
+          console.log(this.attachments);
+        }
+      } catch (error) {
+        console.error('Error converting files to base64:', error);
+      }
     },
-     async submitForm() {
+convertToBase64(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+
+        reader.onload = () => resolve({
+            name: file.name,
+            type: file.type,
+            format: reader.result.split(',')[1],
+        });
+        reader.onerror = error => reject(error);
+
+        reader.readAsDataURL(file);
+    });
+},
+
+    async submitForm() {
       const validEmailDomains = ['@gmail.com', '@alexu.edu.eg'];
 
-      if (this.to.length === 0) {
+      if (this.recievers.length === 0) {
         alert('Please add at least one recipient');
         return;
-       }
+      }
 
       if (this.subject.length === 0) {
         alert('Please enter a subject');
         return;
-       }
+      }
 
-       if (this.emailBody.length === 0) {
+      if (this.body.length === 0) {
         alert('Please enter an email body');
         return;
-       }
+      }
 
-      const isValidEmails = this.to.every(user => {
+      const isValidEmails = this.recievers.every(user => {
         const atIndex = user.email.indexOf('@');
         const hasLocalPart = atIndex > 0; // Check if "@" is not at the beginning
         const hasDomain = atIndex < user.email.length - 1; // Check if "@" is not at the end
@@ -135,7 +144,7 @@ export default {
 
       if (!isValidEmails) {
         alert('Please enter valid email addresses with a proper format ending with @gmail.com or @alexu.edu.eg');
-        this.to = [];
+        this.recievers = [];
         return;
 
       }
@@ -146,52 +155,51 @@ export default {
     async saveForm() {
       const validEmailDomains = ['@gmail.com', '@alexu.edu.eg'];
 
-      if (this.to.length === 0 && this.subject.length === 0 && this.emailBody.length === 0) {
+      if (this.recievers.length === 0 && this.subject.length === 0 && this.body.length === 0) {
         alert('There is nothing to save');
         return;
       }
 
-      const isValidEmails = this.to.every(user => {
+      const isValidEmails = this.recievers.every(user => {
         return validEmailDomains.some(domain => user.email.endsWith(domain));
       });
 
-      if (!isValidEmails) {
-        alert('Please enter valid email addresses ending with @gmail.com or @alexu.edu.eg');
-        this.to = [];
-        return;
-      }
-
       await this.saveDraft();
     },
-    
+
     async sendEmail() {
-      console.log('To:', this.to);
-      console.log('From:', this.from);
+      console.log('To:', this.recievers.map(user => user.email));
+      console.log('From:', this.profileContactInfo);
       console.log('Subject:', this.subject);
-      console.log('Sending email with body:', this.emailBody);
+      console.log('Sending email with body:', this.body);
       console.log('Attachments:', this.attachments);
       const currentDate = new Date();
       const formattedDateTime = format(currentDate, "yyyy-MM-dd h:mm a");
       this.dateTime = formattedDateTime;
-
-      
+      const emailData = {
+        recievers: this.recievers.map(user => user.email),
+        sender: this.profileContactInfo,
+        subject: this.subject,
+        body: this.body,
+        attachments: this.attachments.map(attachment => {
+          return {
+            name: attachment.name, 
+            type: attachment.type,
+            format: attachment.format,
+          };
+        }),
+        dateTime: this.dateTime,
+      };
       try {
         const response = await fetch('http://localhost:8081/mail/sendEmail', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            to: this.to,
-            from: this.from,
-            subject: this.subject,
-            emailBody: this.emailBody,
-            attachments: this.attachments,
-            dateTime: this.dateTime,
-          }),
+          body: JSON.stringify(emailData),
         });
-
         if (response.ok) {
+          // localStorage.setItem('emailData', JSON.stringify(emailData));
           console.log('Email sent successfully');
           alert('Email sent successfully');
         } else {
@@ -211,32 +219,56 @@ export default {
     },
     addUser() {
       console.log('Adding user with email:', this.newUserEmail);
-      this.to.push({ email: this.newUserEmail });
+      this.recievers.push({ email: this.newUserEmail });
       this.closeAddUserModal();
     },
-    saveDraft() {
-      console.log('To:', this.to);
-      console.log('From:', this.from);
-      console.log('Saving draft with body:', this.emailBody);
+    async saveDraft() {
+      console.log('To:', this.recievers.map(user => user.email));
+      console.log('From:', this.sender);
+      console.log('Saving draft with body:', this.body);
       console.log('Attachments:', this.attachments);
       const currentDate = new Date();
       const formattedDateTime = format(currentDate, "yyyy-MM-dd h:mm a");
       this.dateTime = formattedDateTime;
       const draft = {
-        to: this.to,
-        from: this.from,
-        emailBody: this.emailBody,
-        attachments: this.attachments,
+        recievers: this.recievers.map(user => user.email),
+        sender: this.profileContactInfo,
+        subject: this.subject,
+        body: this.body,
+        attachments: this.attachments.map(attachment => {
+          return {
+            name: attachment.name, 
+            type: attachment.type,
+            format: attachment.format,
+          };
+        }),
         dateTime: this.dateTime,
       };
-      // Convert the draft object to a JSON string
-      const draftJson = JSON.stringify(draft);
-      localStorage.setItem('emailDraft', draftJson);
-      console.log('Draft saved successfully');
-      console.log('Draft:', draft);
-      alert('Draft saved successfully');
+      try {
+        const response = await fetch('http://localhost:8081/mail/saveDraft', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(draft),
+        });
+
+        if (response.ok) {
+          // Convert the draft object to a JSON string
+          // const draftJson = JSON.stringify(draft);
+          // localStorage.setItem('emailDraft', draftJson);
+          console.log('Draft saved successfully');
+          alert('Draft saved successfully');
+        } else {
+          console.error('Failed to save draft');
+          alert('Failed to save draft');
+        }
+      } catch (error) {
+        console.error('Error saving draft:', error);
+        alert('Error saving draft');
+      }
     },
-    
+
   },
 };
 </script>
@@ -432,4 +464,5 @@ h2 {
 
 .to-info ul li i {
   margin-right: 5px;
-}</style>
+}
+</style>
