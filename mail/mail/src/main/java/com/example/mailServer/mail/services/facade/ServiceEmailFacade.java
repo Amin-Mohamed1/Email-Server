@@ -237,6 +237,13 @@ public class ServiceEmailFacade {
         }
         return null ;
     }
+    public ArrayList<Folder> showFolder(String account){
+        User u = DataHelper.getUserByAccount(account);
+        if(u != null){
+            return u.getFolders() ;
+        }
+        return null ;
+    }
 
 
 

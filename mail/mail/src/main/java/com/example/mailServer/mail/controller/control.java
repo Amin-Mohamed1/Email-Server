@@ -3,6 +3,7 @@ package com.example.mailServer.mail.controller;
 import com.example.mailServer.mail.services.Contact;
 import com.example.mailServer.mail.services.Email.Email;
 import com.example.mailServer.mail.services.Email.EmailBuilder;
+import com.example.mailServer.mail.services.Folder;
 import com.example.mailServer.mail.services.facade.ServiceEmailFacade;
 import com.example.mailServer.mail.services.facade.ServiceUserFacade;
 import com.example.mailServer.mail.services.USER.*;
@@ -189,6 +190,15 @@ public class control {
     public ResponseEntity<String> moveEmailsToFolder( @PathVariable String account ,@PathVariable String folder ) {
         try {
             return ResponseEntity.ok(se.deleteFolder(account, folder));
+        } catch (Exception w) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+    }
+    @GetMapping("/showContact/{account}")
+    public ResponseEntity<ArrayList<Folder>> showFolders(@PathVariable String account ) {
+        try {
+            return ResponseEntity.ok(se.showFolder(account));
         } catch (Exception w) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 
