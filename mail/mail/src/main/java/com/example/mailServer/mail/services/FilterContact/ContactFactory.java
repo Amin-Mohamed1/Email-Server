@@ -1,8 +1,8 @@
 package com.example.mailServer.mail.services.FilterContact;
 
 
-public class CriteriaFactory {
-    public ICriteria getCriteria(String criteriaName, String criteriaValue){
+public class ContactFactory {
+    public ICriteriaContact getCriteria(String criteriaName, String criteriaValue){
         if (criteriaName == null)
             return null;
         else if (criteriaName.equalsIgnoreCase("EMAILACCOUNT"))

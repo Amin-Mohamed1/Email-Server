@@ -227,6 +227,15 @@ public class control {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+    @PostMapping("/filterContact/{account}/{type}/{value}")
+    public ResponseEntity<ArrayList<Contact>> filterContact(@PathVariable String account, @PathVariable String type,@PathVariable String value) {
+        try{
+            return ResponseEntity.ok(se.filterContact(account,  type , value));
+        }catch (Exception w ){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 
     @PostMapping("/sortEmail/{account}/{folder}/{type}/{sortingOrder}")
     public ResponseEntity<ArrayList<Email>> sortEmail(@PathVariable String account, @PathVariable String folder, @PathVariable String type, @PathVariable boolean sortingOrder ){

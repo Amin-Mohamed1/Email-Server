@@ -4,7 +4,7 @@ import com.example.mailServer.mail.services.Contact;
 
 import java.util.ArrayList;
 
-public class CriteriaEmailAccout implements ICriteria{
+public class CriteriaEmailAccout implements ICriteriaContact{
     private String emailaccount;
 
     public CriteriaEmailAccout(String emailaccount) { this.emailaccount = emailaccount;}

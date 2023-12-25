@@ -1,9 +1,12 @@
 package com.example.mailServer.mail.services.facade;
 
+import com.example.mailServer.mail.services.Contact;
 import com.example.mailServer.mail.services.DataCache.Data;
 import com.example.mailServer.mail.services.DataCache.DataHelper;
 import com.example.mailServer.mail.services.Email.Email;
 import com.example.mailServer.mail.services.Email.EmailBuilder;
+import com.example.mailServer.mail.services.FilterContact.ContactFactory;
+import com.example.mailServer.mail.services.FilterContact.ICriteriaContact;
 import com.example.mailServer.mail.services.FilterEmail.CriteriaFactory;
 import com.example.mailServer.mail.services.FilterEmail.ICriteria;
 import com.example.mailServer.mail.services.Folder;
@@ -250,6 +253,12 @@ public class ServiceEmailFacade {
         ICriteria criteria = factory.getCriteria(type ,criteriaValue ) ;
         return criteria.meetCriteria(emails) ;
     }
+    public ArrayList<Contact> filterContact(String account , String type , String criteriaValue){
+        User u = DataHelper.getUserByAccount(account) ;
+        ContactFactory factory = new ContactFactory () ;
+        ICriteriaContact criteria = factory.getCriteria(type , criteriaValue ) ;
+        return criteria.meetCriteria(u.getContacts()) ;
+    }
 
     public ArrayList<Email> search (String account , String type ,String criteriaValue){
         User u = DataHelper.getUserByAccount(account) ;
@@ -281,12 +290,18 @@ public class ServiceEmailFacade {
         return strategy.doOperation(emails, sortingOrder);
 
     }
-    public List<Email> getEmails(String account , String folder){
+    public List<Email> getEmails(String account , String folder) throws ParseException, IOException {
         User u = DataHelper.getUserByAccount(account) ;
         for(Folder f : u.getFolders()){
             if(f.getName().equals(folder)) {
                 if(folder.equals("trash")){
-
+                    for(int i = 0 ; i < u.getFolders().get(3).getEmails().size() ; i++){
+                        if(isOutDated(u.getFolders().get(3).getEmails().get(i).getDateTime())){
+                            u.getFolders().get(3).getEmails().remove(i) ;
+                            --i;
+                        }
+                    }
+                    d.saveToJson();
                 }
                 return f.getEmails() ;
             }

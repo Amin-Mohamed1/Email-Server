@@ -4,12 +4,12 @@ import com.example.mailServer.mail.services.Contact;
 
 import java.util.ArrayList;
 
-public class OrCriteria implements ICriteria{
-    private ICriteria firstCriteria;
-    private ICriteria secondCriteria;
+public class OrCriteria implements ICriteriaContact{
+    private ICriteriaContact firstCriteria;
+    private ICriteriaContact secondCriteria;
 
 
-    public OrCriteria(ICriteria firstCriteria, ICriteria secondCriteria) {
+    public OrCriteria(ICriteriaContact firstCriteria, ICriteriaContact secondCriteria) {
         this.firstCriteria = firstCriteria;
         this.secondCriteria = secondCriteria;
     }
