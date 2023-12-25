@@ -94,7 +94,14 @@ export default {
       try {
         for (const file of files) {
           const base64String = await this.convertToBase64(file);
-          this.attachments.push(base64String);
+          console.log('Base64 String:', base64String);
+          const byteArray = this.base64ToByteArray(base64String);
+          const attachment = {
+            name: file.name,
+            type: file.type,
+            format: byteArray,
+          };
+          this.attachments.push(attachment);
           console.log(this.attachments);
         }
       } catch (error) {
@@ -107,14 +114,15 @@ export default {
 
         reader.onload = () => {
           const base64String = reader.result.split(',')[1];
-          console.log('Base64:', base64String);  // Log the Base64 string
-          resolve({
-            name: file.name,
-            type: file.type,
-            format: base64String,
-          });
+          // console.log('Base64:', base64String);  // Log the Base64 string
+        //   resolve({
+        //     name: file.name,
+        //     type: file.type,
+        //     format: this.base64ToByteArray(base64String),
+        //   });
+          // };
+          resolve(base64String);
         };
-
         reader.onerror = error => {
           console.error('FileReader Error:', error);
           reject(error);
@@ -123,23 +131,19 @@ export default {
         reader.readAsDataURL(file);
       });
     },
+    base64ToByteArray(base64String) {
+      // Function to convert Base64 string to byte array
+      const binaryString = atob(base64String);
+      const byteArray = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        byteArray[i] = binaryString.charCodeAt(i);
+      }
+      return byteArray;
+    },
+
+    
 
 
-
-// convertToBase64(file) {
-//     return new Promise((resolve, reject) => {
-//         const reader = new FileReader();
-
-//         reader.onload = () => resolve({
-//             name: file.name,
-//             type: file.type,
-//             format: reader.result.split(',')[1],
-//         });
-//         reader.onerror = error => reject(error);
-
-//         reader.readAsDataURL(file);
-//     });
-// },
 
     async submitForm() {
       const validEmailDomains = ['@gmail.com', '@alexu.edu.eg'];
@@ -201,12 +205,6 @@ export default {
       for (const attachment of this.attachments) {
         console.log(attachment);
       }
-
-      // console.log('Attachments:', this.attachments[0]);
-
-      // for (const attachment of this.attachments) {
-      //   this.downloadAttachment(attachment.name, attachment.format);
-      // }
 
 
       const currentDate = new Date();
