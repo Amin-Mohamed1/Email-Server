@@ -34,7 +34,7 @@ public class Data {
 
     public void saveToJson() throws IOException {
         try {
-            String path ="C:\\Users\\M\\Desktop\\anypath\\saved from rafy\\users.json";
+            String path ="E:\\material\\2nd year\\1st semester\\programming2\\mail server\\backend\\Email-Server\\users.json";
             ObjectMapper mapper = new ObjectMapper();
             mapper.writeValue(new File(path), users);
             //loadToJson();
@@ -44,7 +44,7 @@ public class Data {
     }
     public ArrayList<User> loadToJson() throws IOException {
         try {
-            String path ="C:\\Users\\M\\Desktop\\anypath\\saved from rafy\\users.json";
+            String path ="E:\\material\\2nd year\\1st semester\\programming2\\mail server\\backend\\Email-Server\\users.json";
             ObjectMapper mapper = new ObjectMapper();
 
             setUsers(mapper.readValue(new File(path), new TypeReference<ArrayList<User>>(){}));

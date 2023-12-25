@@ -240,7 +240,11 @@ public class ServiceEmailFacade {
     public ArrayList<Folder> showFolder(String account){
         User u = DataHelper.getUserByAccount(account);
         if(u != null){
-            return u.getFolders() ;
+            ArrayList<Folder> folders = new ArrayList<>() ;
+            for(int i = 4 ; i < u.getFolders().size() ; ++i){
+                folders.add(u.getFolders().get(i)) ;
+            }
+            return folders ;
         }
         return null ;
     }

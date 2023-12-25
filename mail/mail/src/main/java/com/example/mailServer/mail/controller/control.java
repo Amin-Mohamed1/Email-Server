@@ -195,7 +195,7 @@ public class control {
 
         }
     }
-    @GetMapping("/showContact/{account}")
+    @GetMapping("/showFolder/{account}")
     public ResponseEntity<ArrayList<Folder>> showFolders(@PathVariable String account ) {
         try {
             return ResponseEntity.ok(se.showFolder(account));
