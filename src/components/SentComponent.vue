@@ -55,7 +55,7 @@
         >
         <span v-if="selectedEmailIds.includes(email.id)" class="select-label">Selected</span>
         <div class="info">
-          <div class="sender" @click="showEmailDetails(email)">{{ email.recievers.join(", ") }}</div>
+          <div class="sender" @click="showEmailDetails(email)">{{ email.recievers }}</div>
           <div class="date-time" @click="showEmailDetails(email)">{{ email.dateTime }}</div>
         </div>
         <div class="subject" @click="showEmailDetails(email)">{{ email.subject }}</div>
@@ -68,18 +68,13 @@
             {{ email.body }}
             <span @click="showEmailDetails(email)">See less</span>
           </div>
-            <div v-if="hasAttachment(email.attachments)" class="attachment-section" @click="showEmailDetails(email)">
-              <strong class="attachment-label">Attachments:</strong>
-              <ul>
-                <li v-for="(attachment, index) in email.attachments" :key="index">
-                  {{ getAttachmentIcon(attachment) }} <strong>{{ attachment }}</strong>
-                </li>
-              </ul>
-            </div>
-            <div v-else class="no-attachments">No attachments</div>
+                   <strong class="attatchments-label">attatchments:</strong>
+                  <ul>
+                    <li v-for="(attatchment, index) in email.attatchments" :key="index">
+                      {{ getattatchmentsIcon(attatchment) }}<strong>{{ attatchment.name }}</strong>
+                    </li>
+                  </ul>
           </div>
-
-         
         <div class="meta">
           <input
             type="checkbox"
@@ -102,15 +97,12 @@
         <div class="subject">{{ selectedEmail.subject }}</div>
         <div class="body">
             {{ selectedEmail.body }}
-            <div v-if="hasAttachment(selectedEmail.attachments)" class="attachment-section">
-              <strong class="attachment-label">Attachments:</strong>
-              <ul>
-                <li v-for="(attachment, index) in selectedEmail.attachments" :key="index">
-                  {{ getAttachmentIcon(attachment) }} <strong>{{ attachment }}</strong>
-                </li>
-              </ul>
-            </div>
-            <div v-else class="no-attachments">No attachments</div>
+                  <strong class="attatchments-label">attatchments:</strong>
+                  <ul>
+                    <li v-for="(attatchment, index) in selectedEmail.attatchments" :key="index">
+                      {{ getattatchmentsIcon(attatchment) }}<strong>{{ attatchment.name }}</strong>
+                    </li>
+                  </ul>
         </div>
         <div class="meta">
           <div class="priority"></div>
@@ -167,7 +159,7 @@ const deleteSelectedEmails = async() =>{
 
 
 const filterQuery = ref('');
-let defaultSortCategory = 'dateTime';
+let defaultSortCategory = 'datetime';
 let sortCategory = ref(defaultSortCategory);
 let defaultSortOrder = 'desc';
 let sortOrder = ref(defaultSortOrder);
@@ -184,7 +176,7 @@ props.Sentemails.forEach((inboxEmail) => {
     sender: inboxEmail.sender,
     subject: inboxEmail.subject,
     body: inboxEmail.body,
-    attachments: inboxEmail.attatchments || [],
+    attatchments: inboxEmail.attatchments || [],
     priority: inboxEmail.priority,
     dateTime: inboxEmail.dateTime,
     read:inboxEmail.read,
@@ -193,52 +185,42 @@ props.Sentemails.forEach((inboxEmail) => {
   emails.value.push(transformedEmail);
 });
 
+
+const getattatchmentsIcon = (attatchment) => {
+  if (attatchment.name.endsWith('.jpeg') || attatchment.name.endsWith('.png')  || attatchment.name.endsWith('.jpg')  ) {
+    return '📷'; 
+  } else if (attatchment.name.endsWith('.docx')) {
+    return '📃';
+  } else if (attatchment.name.endsWith('.pdf')) {
+    return '📃';
+  } else {
+    return '📎';
+  }
+};
 const refreshPage = () => {
   fetchEmails(); 
 };
 
-const hasAttachment = (attachments) => attachments && attachments.length > 0;
+const hasattatchment = (attatchments) => attatchments && attatchments.length > 0;
 let show = ref(false);
 
 const showEmailDetails = (email) => {
     console.log('showEmailDetails called');
-    makeRead(email);
     show.value = true;
     selectedEmail = email;
     console.log(selectedEmail);
 };
 
-const makeRead = async (email) => {
-  try {
-    const EmailAddress = props.profileContactInfo;
-    const response = await fetch(`http://localhost:8081/mail/makeRead/${EmailAddress}/${email.id}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    emails.value = data;
-    console.log(data);
-  } catch (error) {
-    console.error('Error:', error);
-  }
-};
 const closeEmailDetails = () => {
     show.value = false;
     selectedEmail = null;
 };
-const getAttachmentIcon = (attachment) => {
-  if (attachment.endsWith('.jpeg') || attachment.endsWith('.png')  || attachment.endsWith('.jpg')  ) {
+const getattatchmentIcon = (attatchment) => {
+  if (attatchment.endsWith('.jpeg') || attatchment.endsWith('.png')  || attatchment.endsWith('.jpg')  ) {
     return '📷'; 
-  } else if (attachment.endsWith('.docx')) {
+  } else if (attatchment.endsWith('.docx')) {
     return '📃';
-  } else if (attachment.endsWith('.pdf')) {
+  } else if (attatchment.endsWith('.pdf')) {
     return '📃';
   } else {
     return '📎';
@@ -321,12 +303,11 @@ onMounted(() => {
   //setInterval(fetchAndUpdateEmails, 2000);
 });
 
-
+let parsedEmails = [];
 const fetchEmails = async () => {
   try {
     const EmailAddress = props.profileContactInfo;
     const currentFolder = "sent";
-    console.log(EmailAddress +  " , "  + currentFolder);
 
     const response = await fetch(`http://localhost:8081/mail/getEmails/${EmailAddress}/${currentFolder}`, {
       method: 'POST',
@@ -334,20 +315,63 @@ const fetchEmails = async () => {
         'Content-Type': 'application/json',
       },
       mode: 'cors',
-      body: JSON.stringify({  }),
+      body: JSON.stringify({}),
     });
 
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const data = await response.json();
-    emails.value = data;
-    console.log("fetch ", data);
+    const responecedata = await response.json();
+    console.log('Data:', responecedata);
+    parsedEmails = responecedata.map((inboxEmail) => {
+      const transformedEmail = {
+        id: inboxEmail.id,
+        sender: inboxEmail.sender,
+        subject: inboxEmail.subject,
+        body: inboxEmail.body,
+        attatchments: getParsedattatchments(inboxEmail.attatchments),
+        priority: inboxEmail.priority,
+        dateTime: inboxEmail.dateTime,
+        read: inboxEmail.read,
+      };
+      return transformedEmail;
+    });
+    
+    console.log(parsedEmails.value  + ' kkk');
+
+    emails.value = parsedEmails;
+    console.log("fetch ", parsedEmails);
   } catch (error) {
     console.error('Error fetching emails:', error);
   }
   sortEmails("desc");
+};
+
+const parseattatchments = (attatchments) => {
+  if (!Array.isArray(attatchments)) {
+    attatchments = [attatchments];
+  }
+
+  console.log("hellooo");
+
+  return attatchments.map((attatchments) => {
+    let name = attatchments && attatchments.name ? attatchments.name : "N/A";
+    let type = attatchments && attatchments.type ? attatchments.type : "N/A";
+    let format = attatchments && attatchments.format ? attatchments.format : "N/A";
+
+    return {
+      name,
+      type,
+      format,
+    };
+  });
+};
+
+const getParsedattatchments = (attatchments) => {
+  const parsed = parseattatchments(attatchments);
+  console.log('Parsed attatchments:', parsed);
+  return parsed;
 };
 
 const currentPage = ref(1);
@@ -617,19 +641,19 @@ const changePage = (direction) => {
     color: #007BFF;
     margin-left: 5px;
   }
-  .attachment-indicator {
+  .attatchment-indicator {
   margin-left: 5px;
 }
 
-.attachment-section {
+.attatchment-section {
   margin-top: 10px;
 }
 
-.attachment-label {
+.attatchment-label {
   font-weight: bold;
 }
 
-.no-attachments {
+.no-attatchments {
   color: #888;
   margin-top: 10px;
 }
