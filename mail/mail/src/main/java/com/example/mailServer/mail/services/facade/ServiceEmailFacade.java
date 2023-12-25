@@ -16,6 +16,9 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -282,9 +285,28 @@ public class ServiceEmailFacade {
         User u = DataHelper.getUserByAccount(account) ;
         for(Folder f : u.getFolders()){
             if(f.getName().equals(folder)) {
+                if(folder.equals("trash")){
+
+                }
                 return f.getEmails() ;
             }
         }
         return null ;
+    }
+
+    public boolean isOutDated (String dateTime) throws ParseException {
+        LocalDateTime myDateObj = LocalDateTime.now();
+        Date now = Date.from(myDateObj.atZone(ZoneId.systemDefault()).toInstant());
+
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd hh:mm aa");
+        Date date = formatter.parse(dateTime);
+
+        long milliseconds1 = date.getTime();
+        long milliseconds2 = now.getTime();
+        long diff = milliseconds2 - milliseconds1;
+        long diffDays = diff / (24 * 60 * 60 * 1000);
+        if(diffDays <= 29)
+            return false;
+        return true;
     }
 }
