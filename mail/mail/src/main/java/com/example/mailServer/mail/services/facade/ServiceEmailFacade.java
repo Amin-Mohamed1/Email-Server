@@ -53,14 +53,17 @@ public class ServiceEmailFacade {
             d.saveToJson();
         }
     }
-    public List<Email> makeRead (String account , int id  ) throws IOException {
+    public List<Email> makeRead (String account ,String folder,  int id  ) throws IOException {
         User u = DataHelper.getUserByAccount(account) ;
-        for(Email e : u.getFolders().get(0).getEmails()){
-            if(e.getId() == id ){
-                e.setRead(true);
-                d.saveToJson();
-                return  u.getFolders().get(0).getEmails() ;
-            }
+        for(Folder f : u.getFolders()){
+            if(f.getName().equals(folder)){
+                for(Email e : f.getEmails())
+                    if(e.getId() == id ){
+                        e.setRead(true);
+                        d.saveToJson();
+                        return  f.getEmails() ;
+                    }
+                }
         }
         return  null ;
     }

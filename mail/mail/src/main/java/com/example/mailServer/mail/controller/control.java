@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -102,13 +103,12 @@ public class control {
 
         }
     }
-    @PostMapping("/makeRead/{account}/{id}")
-    public ResponseEntity<List<Email>> makeRead(@PathVariable String account , @PathVariable int id ) {
+    @PostMapping("/makeRead/{account}/{folder}/{id}")
+    public ResponseEntity<List<Email>> makeRead(@PathVariable String account,@PathVariable String folder, @PathVariable int id ) {
         try {
-            return ResponseEntity.ok(se.makeRead(account,id));
+            return ResponseEntity.ok(se.makeRead(account, folder, id));
         } catch (Exception w) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-
         }
     }
     @PostMapping("/saveDraft")
