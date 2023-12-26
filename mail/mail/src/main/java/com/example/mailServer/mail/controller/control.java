@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -169,7 +170,7 @@ public class control {
         }
     }
     @GetMapping("/addFolder/{account}/{folder}")
-    public ResponseEntity<String> addFolder( @PathVariable String account ,@PathVariable String folder ) {
+    public ResponseEntity<ArrayList<Folder>> addFolder( @PathVariable String account ,@PathVariable String folder ) {
         try {
             return ResponseEntity.ok(se.addNewFolder(account , folder));
         } catch (Exception w) {
@@ -187,7 +188,7 @@ public class control {
         }
     }
     @DeleteMapping("/deleteFolder/{account}/{folder}")
-    public ResponseEntity<String> moveEmailsToFolder( @PathVariable String account ,@PathVariable String folder ) {
+    public ResponseEntity<ArrayList<Folder>> moveEmailsToFolder( @PathVariable String account ,@PathVariable String folder ) {
         try {
             return ResponseEntity.ok(se.deleteFolder(account, folder));
         } catch (Exception w) {
@@ -199,6 +200,15 @@ public class control {
     public ResponseEntity<ArrayList<Folder>> showFolders(@PathVariable String account ) {
         try {
             return ResponseEntity.ok(se.showFolder(account));
+        } catch (Exception w) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+
+        }
+    }
+    @PostMapping("/renameFolder/{account}/{oldFolder}/{newFolder}")
+    public ResponseEntity<ArrayList<Folder>> renameFolder(@PathVariable String account , @PathVariable String oldFolder , @PathVariable String newFolder) {
+        try {
+            return ResponseEntity.ok(se.renameFolder(account, oldFolder, newFolder));
         } catch (Exception w) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 

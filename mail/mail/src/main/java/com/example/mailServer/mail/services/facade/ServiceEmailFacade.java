@@ -196,14 +196,14 @@ public class ServiceEmailFacade {
         }
         return null ;
     }
-    public String addNewFolder(String account , String folder) throws IOException {
+    public ArrayList<Folder> addNewFolder(String account , String folder) throws IOException {
         User u = DataHelper.getUserByAccount(account);
         if(u != null){
             u.addFolder(folder);
             d.saveToJson();
-            return "added" ;
+            return showFolder(account) ;
         }
-        return "not added" ;
+        return null ;
     }
     public List<Email> moveEmailsToFolder(String account , String folder , int[] id) throws IOException {
         User u = DataHelper.getUserByAccount(account);
@@ -224,14 +224,14 @@ public class ServiceEmailFacade {
         }
         return null ;
     }
-    public String deleteFolder(String account , String folder) throws IOException {
+    public ArrayList<Folder> deleteFolder(String account , String folder) throws IOException {
         User u = DataHelper.getUserByAccount(account);
         if(u != null){
-            for(int i = 0 ; i < u.getFolders().size() ; i++){
+            for(int i = 4 ; i < u.getFolders().size() ; i++){
                 if(u.getFolders().get(i).getName().equals(folder)){
                     u.getFolders().remove(i) ;
                     d.saveToJson() ;
-                    return "deleted folder" ;
+                    return showFolder(account) ;
                 }
             }
         }
@@ -245,6 +245,19 @@ public class ServiceEmailFacade {
                 folders.add(u.getFolders().get(i)) ;
             }
             return folders ;
+        }
+        return null ;
+    }
+    public ArrayList<Folder> renameFolder(String account , String oldFolder , String newFolder) throws IOException {
+        User u = DataHelper.getUserByAccount(account);
+        if(u != null){
+            for(int i = 4 ; i < u.getFolders().size() ; i++){
+                if(u.getFolders().get(i).getName().equals(oldFolder)){
+                    u.getFolders().get(i).setName(newFolder); ;
+                    d.saveToJson() ;
+                    return showFolder(account) ;
+                }
+            }
         }
         return null ;
     }
