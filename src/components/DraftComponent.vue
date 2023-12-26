@@ -5,7 +5,6 @@
       <div class="sort-bar">
         <select v-model="sortCategory" class="sort-category">
           <option value="datetime">Date</option>
-          <option value="priority">Priority</option>
           <option value="subject">Subject</option>
         </select>
         <div class="sort-icons">
@@ -30,7 +29,7 @@
 
   <div>
     <button @click="deleteSelectedEmails" :disabled="selectedEmailIds.length === 0" class="action-btn delete-btn">
-      <i class="fas fa-trash"></i>
+      <i class="fas fa-trash"></i> Delete
     </button>
   </div>
 
@@ -61,6 +60,7 @@
         {{ email.body }}
         <span @click="showEmailDetails(email)">See less</span>
       </div>
+      <!--
       <div v-if="hasAttachment(email.attachments)" class="attachment-section" @click="showEmailDetails(email)">
         <strong class="attachment-label">Attachments:</strong>
         <ul>
@@ -70,9 +70,17 @@
         </ul>
       </div>
       <div v-else class="no-attachments">No attachments</div>
-    </div>
-    
-    
+      -->
+        <div v-if="true" class="attatchments-section" @click="showEmailDetails(email)">
+          <strong class="attatchments-label">attatchments:</strong>
+            <ul>
+              <li v-for="(attachment, index) in email.attatchments" :key="index">
+                  {{ getattatchmentsIcon(attachment) }}<strong>{{ attachment.name }}</strong>
+              </li>
+            </ul>
+        </div>
+      </div>
+
     <div class="meta" style="margin-top: 10px;">
       <input
         type="checkbox"
@@ -97,15 +105,14 @@
         <div class="subject">{{ selectedEmail.subject }}</div>
         <div class="body">
             {{ selectedEmail.body }}
-            <div v-if="hasAttachment(selectedEmail.attachments)" class="attachment-section">
-              <strong class="attachment-label">Attachments:</strong>
+            <div v-if="true" class="attatchments-section" @click="showEmailDetails(email)">
+              <strong class="attatchments-label">attatchments:</strong>
               <ul>
-                <li v-for="(attachment, index) in selectedEmail.attachments" :key="index">
-                  {{ getAttachmentIcon(attachment) }} <strong>{{ attachment }}</strong>
+                <li v-for="(attachment, index) in email.attatchments" :key="index">
+                  {{ getattatchmentsIcon(attachment) }}<strong>{{ attachment.name }}</strong>
                 </li>
               </ul>
             </div>
-            <div v-else class="no-attachments">No attachments</div>
             <div class="meta">
               <div class="priority"></div>
               <button @click.stop="closeEmailDetails" class="close-btn">
@@ -169,6 +176,19 @@ let selectedEmail = null;
 const props = defineProps(['profileContactInfo', 'Draftemails']);
 
 const emails = ref([]);
+
+const getattatchmentsIcon = (attachment) => {
+  if (attachment.name.endsWith('.jpeg') || attachment.name.endsWith('.png')  || attachment.name.endsWith('.jpg')  ) {
+    return '📷'; 
+  } else if (attachment.name.endsWith('.docx')) {
+    return '📃';
+  } else if (attachment.name.endsWith('.pdf')) {
+    return '📃';
+  } else {
+    return '📎';
+  }
+};
+
 
 props.Draftemails.forEach((inboxEmail) => {
   const transformedEmail = {
@@ -309,12 +329,10 @@ onMounted(() => {
   fetchEmails();
 });
 
-
 const fetchEmails = async () => {
   try {
     const EmailAddress = props.profileContactInfo;
     const currentFolder = "draft";
-    console.log(EmailAddress +  " , "  + currentFolder);
 
     const response = await fetch(`http://localhost:8081/mail/getEmails/${EmailAddress}/${currentFolder}`, {
       method: 'POST',
@@ -322,7 +340,7 @@ const fetchEmails = async () => {
         'Content-Type': 'application/json',
       },
       mode: 'cors',
-      body: JSON.stringify({  }),
+      body: JSON.stringify({}),
     });
 
     if (!response.ok) {
@@ -330,14 +348,37 @@ const fetchEmails = async () => {
     }
 
     const data = await response.json();
-    emails.value = data;
-    console.log("Draft returned ", data);
+
+    const parsedEmails = data.map((inboxEmail) => {
+      const transformedEmail = {
+        id: inboxEmail.id,
+        sender: inboxEmail.sender,
+        subject: inboxEmail.subject,
+        body: inboxEmail.body,
+        attachments: parseAttachments(inboxEmail.attachments),
+        priority: inboxEmail.priority,
+        dateTime: inboxEmail.dateTime,
+        read: inboxEmail.read,
+        recievers: inboxEmail.recievers
+      };
+      return transformedEmail;
+    });
+
+    emails.value = parsedEmails;
+    console.log("fetch ", parsedEmails);
   } catch (error) {
     console.error('Error fetching emails:', error);
   }
   sortEmails("desc");
 };
 
+const parseAttachments = (attachments) => {
+  return attachments.map(attachment => ({
+    name: attachment.name,
+    type: attachment.type,
+    format: attachment.format,
+  }));
+};
 const currentPage = ref(1);
 const totalPages = computed(() => Math.ceil(emails.value.length / emailsPerPage));
 const displayedEmails = computed(() => {
