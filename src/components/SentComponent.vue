@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="inbox-title">Inbox</h2>
+    <h2 class="inbox-title">Sent</h2>
     <div class="search-bars-container">
       <div class="sort-bar">
         <select v-model="sortCategory" class="sort-category">
@@ -67,41 +67,17 @@
             {{ email.body }}
             <span @click="showEmailDetails(email)">See less</span>
           </div>
-          <!-- 
-            <div v-if="hasattatchments(email.attatchments)" class="attatchments-section" @click="showEmailDetails(email)">
-              <strong class="attatchments-label">attatchments:</strong>
-              <ul>
-                <li v-for="(attatchments, index) in email.attatchments" :key="index">
-                  {{ getattatchmentsIcon(attatchments) }} <strong>{{ attatchments.name }}</strong>
-                </li>
-              </ul>
-            </div>
-
-            <div v-else class="no-attatchments" @click="showEmailDetails(email)">No attatchments</div>
-          -->
-          <div v-if="true" class="attatchments-section" @click="showEmailDetails(email)">
-              <strong class="attatchments-label">attatchments:</strong>
-              <ul>
-                <li v-for="(attachment, index) in email.attatchments" :key="index">
-                  {{ getattatchmentsIcon(attachment) }}<strong>{{ attachment.name }}</strong>
-                </li>
-              </ul>
-            </div>
           </div>
+          <div v-if="true" class="attatchments-section">
+              <strong class="attatchments-label">attatchments:</strong>
+              <ul>
+                <li v-for="(attatchment, index) in email.attatchments" :key="index" @click="downloadattatchment(attatch)">
+                  {{ getattatchmentsIcon(attatchment) }}<strong>{{ attatchment.name }}</strong>
+                </li>
+              </ul>
+            </div>
         <div class="meta">
           <div class="priority"></div>
-          <!--
-          <div class="rating">
-              <i
-                v-for="index in 5"
-                :key="index"
-                class="fas fa-star"
-                :class="{ 'glow': index <= email.priority }"
-                @click="updatePriority(email.id, index)"
-              ></i>
-            </div>
-           -<input type="range" v-model="email.priority" min="1" max="5" @change="updatePriority(email.id, email.priority)">
-          -->
             <input
             type="checkbox"
             v-model="selectedEmailIds"
@@ -125,8 +101,8 @@
             <div>
                   <strong class="attatchments-label">attatchments:</strong>
                   <ul>
-                    <li v-for="(attachment, index) in selectedEmail.attatchments" :key="index">
-                      {{ getattatchmentsIcon(attachment) }}<strong>{{ attachment.name }}</strong>
+                    <li v-for="(attatchment, index) in selectedEmail.attatchments" :key="index">
+                      {{ getattatchmentsIcon(attatchment) }}<strong>{{ attatchment.name }}</strong>
                     </li>
                   </ul>
             </div>
@@ -169,6 +145,23 @@ let selectedEmail= null;
 const props = defineProps(['profileContactInfo', 'Sentemails']);
 const emails = ref([]);
 let selectedEmailIds = ref([]); 
+
+
+
+
+const downloadattatchment = (attatchment) => {
+      const dataURI = `data:${attatchment.type};base64,${attatchment.format}`;
+      const fileName = attatchment.name;
+
+      const downloadLink = document.createElement('a');
+      downloadLink.href = dataURI;
+      downloadLink.setAttribute('download', fileName);
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+
+      document.body.removeChild(downloadLink);
+};
+
 
 const updatePriority = async (emailId, priority) => {
   try {
@@ -266,12 +259,12 @@ const refreshPage = () => {
 };
 
 
-const getattatchmentsIcon = (attachment) => {
-  if (attachment.name.endsWith('.jpeg') || attachment.name.endsWith('.png')  || attachment.name.endsWith('.jpg')  ) {
+const getattatchmentsIcon = (attatchment) => {
+  if (attatchment.name.endsWith('.jpeg') || attatchment.name.endsWith('.png')  || attatchment.name.endsWith('.jpg')  ) {
     return '📷'; 
-  } else if (attachment.name.endsWith('.docx')) {
+  } else if (attatchment.name.endsWith('.docx')) {
     return '📃';
-  } else if (attachment.name.endsWith('.pdf')) {
+  } else if (attatchment.name.endsWith('.pdf')) {
     return '📃';
   } else {
     return '📎';
