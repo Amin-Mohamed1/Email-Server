@@ -49,10 +49,15 @@
     </div>
 
     <div class="attachment-container">
-      <label for="attachments">
+      <label for="attachmentOBJ">
         <i class="fas fa-paperclip"></i> Choose Attachments:
       </label>
-      <input type="file" id="attachments" multiple @change="handleFileUpload" class="file-input" />
+      <input
+              type="file"
+              multiple
+              ref="fileInput"
+              @change="handleFileChange"
+            />
     </div>
 
     <button @click="submitForm" class="send-button">
@@ -77,7 +82,7 @@ export default {
     return {
       sender: 'profileContactInfo',
       body: '',
-      attachments: [],
+      attachmentOBJ: [],
       showAddUserModal: false,
       newUserEmail: '',
       recievers: [],
@@ -89,62 +94,29 @@ export default {
     this.sender = this.profileContactInfo;
   },
   methods: {
-   async handleFileUpload(event) {
-      const files = event.target.files;
-      try {
-        for (const file of files) {
-          const base64String = await this.convertToBase64(file);
-          console.log('Base64 String:', base64String);
-          const byteArray = this.base64ToByteArray(base64String);
-          const attachment = {
-            name: file.name,
-            type: file.type,
-            format: byteArray,
-          };
-          this.attachments.push(attachment);
-          console.log(this.attachments);
-        }
-      } catch (error) {
-        console.error('Error converting files to base64:', error);
+    async handleFileChange() {
+      console.log("handleFileChange");
+      this.selectedFile = this.$refs.fileInput.files;
+      for (let i = 0; i < this.selectedFile.length; i++) {
+        let tempOBJ = {
+          format: await this.convertFileToBase64(this.selectedFile[i]),
+          type: this.selectedFile[i].type,
+          name: this.selectedFile[i].name,
+        };
+        this.attachmentOBJ.push(tempOBJ);
       }
+      console.log("attachmentOBJ");
+      console.log(this.attachmentOBJ);
+      console.log(this.selectedFile);
     },
-    convertToBase64(file) {
+    convertFileToBase64(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
-
-        reader.onload = () => {
-          const base64String = reader.result.split(',')[1];
-          // console.log('Base64:', base64String);  // Log the Base64 string
-        //   resolve({
-        //     name: file.name,
-        //     type: file.type,
-        //     format: this.base64ToByteArray(base64String),
-        //   });
-          // };
-          resolve(base64String);
-        };
-        reader.onerror = error => {
-          console.error('FileReader Error:', error);
-          reject(error);
-        };
-
         reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result.split(",")[1]);
+        reader.onerror = (error) => reject(error);
       });
     },
-    base64ToByteArray(base64String) {
-      // Function to convert Base64 string to byte array
-      const binaryString = atob(base64String);
-      const byteArray = new Uint8Array(binaryString.length);
-      for (let i = 0; i < binaryString.length; i++) {
-        byteArray[i] = binaryString.charCodeAt(i);
-      }
-      return byteArray;
-    },
-
-    
-
-
-
     async submitForm() {
       const validEmailDomains = ['@gmail.com', '@alexu.edu.eg'];
 
@@ -201,12 +173,7 @@ export default {
       console.log('From:', this.profileContactInfo);
       console.log('Subject:', this.subject);
       console.log('Sending email with body:', this.body);
-      console.log('Attachments:');
-      for (const attachment of this.attachments) {
-        console.log(attachment);
-      }
-
-
+      console.log('Attachments:', this.attachmentOBJ);
       const currentDate = new Date();
       const formattedDateTime = format(currentDate, "yyyy-MM-dd h:mm a");
       this.dateTime = formattedDateTime;
@@ -215,13 +182,7 @@ export default {
         sender: this.profileContactInfo,
         subject: this.subject,
         body: this.body,
-        attachments: this.attachments.map(attachment => {
-          return {
-            name: attachment.name, 
-            type: attachment.type,
-            format: attachment.format,
-          };
-        }),
+        attatchments: this.attachmentOBJ,
         dateTime: this.dateTime,
       };
       try {
@@ -233,7 +194,6 @@ export default {
           body: JSON.stringify(emailData),
         });
         if (response.ok) {
-          // localStorage.setItem('emailData', JSON.stringify(emailData));
           console.log('Email sent successfully');
           console.log('Server Response:', response);
           alert('Email sent successfully');
@@ -246,20 +206,6 @@ export default {
         alert('Error sending email');
       }
     },
-
-    // downloadAttachment(name, base64Data) {
-    //   // Create an anchor element to trigger the download
-    //   const link = document.createElement('a');
-    //   link.href = `data:${base64Data}`;
-    //   link.download = name;
-
-    //   // Append the anchor to the body and programmatically click it to trigger the download
-    //   document.body.appendChild(link);
-    //   link.click();
-
-    //   // Remove the anchor from the body
-    //   document.body.removeChild(link);
-    // },
     
     openAddUserModal() {
       this.showAddUserModal = true;
@@ -276,7 +222,7 @@ export default {
       console.log('To:', this.recievers.map(user => user.email));
       console.log('From:', this.sender);
       console.log('Saving draft with body:', this.body);
-      console.log('Attachments:', this.attachments);
+      console.log('Attachments:', this.attachmentOBJ);
       const currentDate = new Date();
       const formattedDateTime = format(currentDate, "yyyy-MM-dd h:mm a");
       this.dateTime = formattedDateTime;
@@ -285,13 +231,7 @@ export default {
         sender: this.profileContactInfo,
         subject: this.subject,
         body: this.body,
-        attachments: this.attachments.map(attachment => {
-          return {
-            name: attachment.name, 
-            type: attachment.type,
-            format: attachment.format,
-          };
-        }),
+        attatchments: this.attachmentOBJ,
         dateTime: this.dateTime,
       };
       try {
@@ -304,9 +244,6 @@ export default {
         });
 
         if (response.ok) {
-          // Convert the draft object to a JSON string
-          // const draftJson = JSON.stringify(draft);
-          // localStorage.setItem('emailDraft', draftJson);
           console.log('Draft saved successfully');
           alert('Draft saved successfully');
         } else {
