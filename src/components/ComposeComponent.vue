@@ -43,7 +43,7 @@
       <div class="modal-content">
         <span class="close" @click="closeAddUserModal">&times;</span>
         <label for="newUserEmail">Enter User Gmail:</label>
-        <input type="text" id="newUserEmail" v-model="newUserEmail" placeholder="Enter user's email" />
+        <input class= "inputtt" type="text" id="newUserEmail" v-model="newUserEmail" placeholder="Enter user's email" />
         <button @click="addUser" class="add-user-button">Add User</button>
       </div>
     </div>
@@ -330,7 +330,6 @@ h2 {
   width: 90%;
   font-family: Arial, sans-serif;
   position: relative;
-  /* Added to handle positioning of the button */
 }
 
 /* Add User button styling */
@@ -451,5 +450,10 @@ h2 {
 
 .to-info ul li i {
   margin-right: 5px;
+}
+.inputtt{
+  margin-left:5px;
+  margin-right:5px;
+  height: 30px;
 }
 </style>

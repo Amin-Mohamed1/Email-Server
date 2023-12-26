@@ -1,5 +1,11 @@
 <template>
   <div class="contact-container">
+    
+    <div class="search-bar">
+      <input type="text" v-model="searchQuery" placeholder="Search by name or email">
+      <button class="search-btn" @click="searchContacts"><i class="fas fa-search"></i></button>
+    </div>
+
     <h2>Add to Contact</h2>
     <form @submit.prevent="submitForm" class="contact-form">
       <div class="input-box">
@@ -29,12 +35,12 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="(user, index) in userList" :key="index" class="hoverable-row">
+        <tr v-for="(user, index) in userList" :key="index" :class="{ 'searched-contact': copyUserList.includes(user) }" class="hoverable-row">
           <td>{{ user.name }}</td>
           <td>{{ user.emailaccount }}</td>
           <td>
-            <button @click="editContact(user.id)" class="edit-btn">Edit</button>
-            <button @click="deleteContact(user.id)" class="delete-btn">Delete</button>
+            <button @click="editContact(user.id)" class="edit-btn"><i class="fas fa-edit"></i></button>
+            <button @click="deleteContact(user.id)" class="delete-btn"><i class="fas fa-trash"></i></button>
           </td>
         </tr>
       </tbody>
@@ -42,10 +48,9 @@
   </div>
 </template>
 
+
 <script>
 import { defineComponent } from 'vue';
-import axios from 'axios';
-
 export default defineComponent({
   props: {
     profileContactInfo: String,
@@ -59,6 +64,8 @@ export default defineComponent({
       },
       nextId: 1,
       sortOrder: 'asc',
+      searchQuery: '',
+      copyUserList:[]
     };
   },
   methods: {
@@ -207,6 +214,21 @@ export default defineComponent({
         console.log(error + " why!");
       }
     },
+    searchContacts() {
+      this.copyUserList = this.userList;
+      const query = this.searchQuery.toLowerCase().trim();
+      if (query === '') {
+        return;
+      }
+
+      this.copyUserList = this.copyUserList.filter((user) => {
+        const nameMatch = user.name.toLowerCase().includes(query);
+        const emailMatch = user.emailaccount.toLowerCase().includes(query);
+        console.log(nameMatch + " " + emailMatch);
+        return nameMatch || emailMatch;
+      });
+      console.log(this.copyUserList);
+    },
 
   },
 });
@@ -214,18 +236,105 @@ export default defineComponent({
 
 
 <style scoped>
+
+.searched-contact {
+  background-color: #007BFF; 
+  font-weight: bold;
+  color:#ffffff;
+}
+.searched-contact:hover {
+  background-color: #1d59a8 !important; 
+  font-weight: bold;
+  color:#ffffff;
+}
+
+.search-bar{
+    display: flex;
+    margin-top: 20px;
+    transition: transform 0.3s;
+    margin-bottom: 20px;
+    margin-left: 90px;
+    margin-right: 2px;
+    width:100%;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+    overflow: hidden;
+    width:30%;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .search-bar:hover{
+    transform: scale(1.05);
+  }
+
+
+  .search-bar,
+  .search-bar input
+  {
+    transition: border-color 0.3s;
+  }
+
+  .search-bar{
+    padding: 8px;
+    border: 0px solid #ffffff;
+    border-radius: 4px;
+    margin-right: 10px;
+    width:600px;
+    color: #000000;
+    background-color: #ffffff;
+    outline: none;
+  }
+
+  .search-bar input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ffffff;
+    border-radius: 4px;
+    margin-right: 10px;
+    color: #000000;
+    outline: none;
+  }
+
+  .search-bar .search-btn{
+    background-color: #007BFF;
+    color: #fff;
+    border: none;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    outline: none;
+  }
+
+  .search-bar .search-btn i {
+    font-size: 18px;
+  }
+
+  .search-bar .search-input::placeholder {
+    color: #007BFF;
+  }
+
+  .search-bar,
+  .search-bar input:focus{
+    border-color: #053a72;
+  }
+
+
 .contact-container {
   max-width: 800px;
   margin: auto;
+  font-weight: bold;
   padding: 20px;
 }
 .contact-form {
   max-width: 400px;
   margin: auto;
+  font-weight: bold;
   margin-bottom: 20px;
 }
 .input-box {
   margin: 12px 0;
+  font-weight: bold;
 }
 input {
   height: 100%;
@@ -301,9 +410,10 @@ th {
   right: 5px;
   top: 50%;
   transform: translateY(-50%);
-  color: #555; /* Adjust the color as needed */
+  color: #555; 
 }
 .hoverable-row:hover {
   background-color: #f0f0f0;
 }
+
 </style>
