@@ -52,7 +52,7 @@
         >
       <span v-if="selectedEmailIds.includes(email.id)" class="select-label">Selected</span>
 
-        <div class="info" @hover="showEmailDetails(email)">
+        <div class="info">
           <div class="sender">{{ email.sender }}</div>
           <div class="date-time">{{ email.dateTime }}</div>
           <!--<div> {{ email.attatchments }}</div>-->
@@ -79,15 +79,15 @@
 
             <div v-else class="no-attatchments" @click="showEmailDetails(email)">No attatchments</div>
           -->
-          <div v-if="true" class="attatchments-section" @click="showEmailDetails(email)">
+          </div>
+          <div v-if="true" class="attatchments-section">
               <strong class="attatchments-label">attatchments:</strong>
               <ul>
-                <li v-for="(attachment, index) in email.attatchments" :key="index">
-                  {{ getattatchmentsIcon(attachment) }}<strong>{{ attachment.name }}</strong>
+                <li v-for="(attatchment, index) in email.attatchments" :key="index" @click="downloadAttachment(attatchment)">
+                    {{ getattatchmentsIcon(attatchment) }}<strong>{{ attatchment.name }}</strong>
                 </li>
               </ul>
             </div>
-          </div>
         <div class="meta">
           <div class="priority">Priority: {{ email.priority }}</div>
           <div class="rating">
@@ -124,8 +124,8 @@
             <div>
                   <strong class="attatchments-label">attatchments:</strong>
                   <ul>
-                    <li v-for="(attachment, index) in selectedEmail.attatchments" :key="index">
-                      {{ getattatchmentsIcon(attachment) }}<strong>{{ attachment.name }}</strong>
+                    <li v-for="(attatchment, index) in selectedEmail.attatchments" :key="index">
+                      {{ getattatchmentsIcon(attatchment) }}<strong>{{ attatchment.name }}</strong>
                     </li>
                   </ul>
             </div>
@@ -193,6 +193,20 @@ const updatePriority = async (emailId, priority) => {
   }
 
 };
+
+const downloadAttachment = (attachment) => {
+      const dataURI = `data:${attachment.type};base64,${attachment.format}`;
+      const fileName = attachment.name;
+
+      const downloadLink = document.createElement('a');
+      downloadLink.href = dataURI;
+      downloadLink.setAttribute('download', fileName);
+      document.body.appendChild(downloadLink);
+      downloadLink.click();
+
+      document.body.removeChild(downloadLink);
+};
+
 const moveToFolder = async() =>{
   console.log('Selected Email IDs:', selectedEmailIds.value);
   var array1 = JSON.stringify(selectedEmailIds.value);
@@ -265,12 +279,12 @@ const refreshPage = () => {
 };
 
 
-const getattatchmentsIcon = (attachment) => {
-  if (attachment.name.endsWith('.jpeg') || attachment.name.endsWith('.png')  || attachment.name.endsWith('.jpg')  ) {
+const getattatchmentsIcon = (attatchment) => {
+  if (attatchment.name.endsWith('.jpeg') || attatchment.name.endsWith('.png')  || attatchment.name.endsWith('.jpg')  ) {
     return '📷'; 
-  } else if (attachment.name.endsWith('.docx')) {
+  } else if (attatchment.name.endsWith('.docx')) {
     return '📃';
-  } else if (attachment.name.endsWith('.pdf')) {
+  } else if (attatchment.name.endsWith('.pdf')) {
     return '📃';
   } else {
     return '📎';
@@ -309,9 +323,6 @@ const makeRead = async (email) => {
   } catch (error) {
     console.error('Error:', error);
   }
-
-  sortCategory = "datetime";
-  sortEmails("desc");
 };
 const closeEmailDetails = () => {
     show.value = false;
