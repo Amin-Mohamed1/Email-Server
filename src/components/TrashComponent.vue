@@ -62,15 +62,14 @@
             {{ email.body }}
             <span @click="showEmailDetails(email)">See less</span>
           </div>
-            <div v-if="hasAttachment(email.attachments)" class="attachment-section" @click="showEmailDetails(email)">
-              <strong class="attachment-label">Attachments:</strong>
+          <div v-if="true" class="attatchments-section">
+              <strong class="attatchments-label">attatchments:</strong>
               <ul>
-                <li v-for="(attachment, index) in email.attachments" :key="index">
-                  {{ getAttachmentIcon(attachment) }} <strong>{{ attachment }}</strong>
+                <li v-for="(attatchment, index) in email.attatchments" :key="index" @click="downloadattatchment(attatch)">
+                  {{ getattatchmentsIcon(attatchment) }}<strong>{{ attatchment.name }}</strong>
                 </li>
               </ul>
             </div>
-            <div v-else class="no-attachments" @click="showEmailDetails(email)">No attachments</div>
           </div>
         <div class="meta">
           <div class="priority">Priority: {{ email.priority }}</div>
@@ -96,15 +95,14 @@
         <div class="subject">{{ selectedEmail.subject }}</div>
         <div class="body">
             {{ selectedEmail.body }}
-            <div v-if="hasAttachment(selectedEmail.attachments)" class="attachment-section">
-              <strong class="attachment-label">Attachments:</strong>
+            <div v-if="true" class="attatchments-section">
+              <strong class="attatchments-label">attatchments:</strong>
               <ul>
-                <li v-for="(attachment, index) in selectedEmail.attachments" :key="index">
-                  {{ getAttachmentIcon(attachment) }} <strong>{{ attachment }}</strong>
+                <li v-for="(attatchment, index) in selectedEmail.attatchments" :key="index" @click="downloadattatchment(attatch)">
+                  {{ getattatchmentsIcon(attatchment) }}<strong>{{ attatchment.name }}</strong>
                 </li>
               </ul>
             </div>
-            <div v-else class="no-attachments">No attachments</div>
         </div>
         <div class="meta">
           <div class="priority">Priority: {{ selectedEmail.priority }}</div>
@@ -165,6 +163,18 @@ let selectedEmailIds = ref([]);
 // };
 
 
+
+const getattatchmentsIcon = (attatchment) => {
+  if (attatchment.name.endsWith('.jpeg') || attatchment.name.endsWith('.png')  || attatchment.name.endsWith('.jpg')  ) {
+    return '📷'; 
+  } else if (attatchment.name.endsWith('.docx')) {
+    return '📃';
+  } else if (attatchment.name.endsWith('.pdf')) {
+    return '📃';
+  } else {
+    return '📎';
+  }
+};
 //restore
 const moveToFolder = async() =>{
   console.log('Selected Email IDs:', selectedEmailIds.value);
@@ -222,7 +232,7 @@ props.Trashemails.forEach((inboxEmail) => {
     sender: inboxEmail.sender,
     subject: inboxEmail.subject,
     body: inboxEmail.body,
-    attachments: inboxEmail.attatchments || [],
+    attatchments: inboxEmail.attatchments || [],
     priority: inboxEmail.priority,
     dateTime: inboxEmail.dateTime,
     read:inboxEmail.read,
@@ -232,7 +242,7 @@ props.Trashemails.forEach((inboxEmail) => {
 const refreshPage = () => {
   fetchEmails(); 
 };
-const hasAttachment = (attachments) => attachments && attachments.length > 0;
+const hasattatchment = (attatchments) => attatchments && attatchments.length > 0;
 let show = ref(false);
 const showEmailDetails = (email) => {
     console.log('showEmailDetails called');
@@ -269,12 +279,12 @@ const closeEmailDetails = () => {
     show.value = false;
     selectedEmail = null;
 };
-const getAttachmentIcon = (attachment) => {
-  if (attachment.endsWith('.jpeg') || attachment.endsWith('.png')  || attachment.endsWith('.jpg')  ) {
+const getattatchmentIcon = (attatchment) => {
+  if (attatchment.endsWith('.jpeg') || attatchment.endsWith('.png')  || attatchment.endsWith('.jpg')  ) {
     return '📷'; 
-  } else if (attachment.endsWith('.docx')) {
+  } else if (attatchment.endsWith('.docx')) {
     return '📃';
-  } else if (attachment.endsWith('.pdf')) {
+  } else if (attatchment.endsWith('.pdf')) {
     return '📃';
   } else {
     return '📎';
@@ -373,7 +383,6 @@ const fetchEmails = async () => {
   } catch (error) {
     console.error('Error fetching emails:', error);
   }
-  sortEmails("desc");
 };
 
 const currentPage = ref(1);
@@ -649,19 +658,19 @@ const changePage = (direction) => {
     color: #007BFF;
     margin-left: 5px;
   }
-  .attachment-indicator {
+  .attatchment-indicator {
   margin-left: 5px;
 }
 
-.attachment-section {
+.attatchment-section {
   margin-top: 10px;
 }
 
-.attachment-label {
+.attatchment-label {
   font-weight: bold;
 }
 
-.no-attachments {
+.no-attatchments {
   color: #888;
   margin-top: 10px;
 }
