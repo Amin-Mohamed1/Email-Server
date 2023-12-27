@@ -151,14 +151,35 @@ export default {
     async saveForm() {
       const validEmailDomains = ['@gmail.com', '@alexu.edu.eg'];
 
-      if (this.recievers.length === 0 && this.subject.length === 0 && this.body.length === 0) {
-        alert('There is nothing to save');
+      if (this.recievers.length === 0) {
+        alert('Please add at least one recipient');
+        return;
+      }
+
+      if (this.subject.length === 0) {
+        alert('Please enter a subject');
+        return;
+      }
+
+      if (this.body.length === 0) {
+        alert('Please enter an email body');
         return;
       }
 
       const isValidEmails = this.recievers.every(user => {
-        return validEmailDomains.some(domain => user.email.endsWith(domain));
+        const atIndex = user.email.indexOf('@');
+        const hasLocalPart = atIndex > 0; // Check if "@" is not at the beginning
+        const hasDomain = atIndex < user.email.length - 1; // Check if "@" is not at the end
+
+        return hasLocalPart && hasDomain && validEmailDomains.some(domain => user.email.endsWith(domain));
       });
+
+      if (!isValidEmails) {
+        alert('Please enter valid email addresses with a proper format ending with @gmail.com or @alexu.edu.eg');
+        this.recievers = [];
+        return;
+
+      }
 
       await this.saveDraft();
     },
