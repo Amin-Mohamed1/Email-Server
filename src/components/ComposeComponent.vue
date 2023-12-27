@@ -43,7 +43,7 @@
       <div class="modal-content">
         <span class="close" @click="closeAddUserModal">&times;</span>
         <label for="newUserEmail">Enter User Gmail:</label>
-        <input class= "inputtt" type="text" id="newUserEmail" v-model="newUserEmail" placeholder="Enter user's email" />
+        <input class="inputtt" type="text" id="newUserEmail" v-model="newUserEmail" placeholder="Enter user's email" />
         <button @click="addUser" class="add-user-button">Add User</button>
       </div>
     </div>
@@ -52,12 +52,7 @@
       <label for="attachmentOBJ">
         <i class="fas fa-paperclip"></i> Choose Attachments:
       </label>
-      <input
-              type="file"
-              multiple
-              ref="fileInput"
-              @change="handleFileChange"
-            />
+      <input type="file" multiple ref="fileInput" @change="handleFileChange" />
     </div>
 
     <button @click="submitForm" class="send-button">
@@ -206,7 +201,7 @@ export default {
         alert('Error sending email');
       }
     },
-    
+
     openAddUserModal() {
       this.showAddUserModal = true;
     },
@@ -451,9 +446,10 @@ h2 {
 .to-info ul li i {
   margin-right: 5px;
 }
-.inputtt{
-  margin-left:5px;
-  margin-right:5px;
+
+.inputtt {
+  margin-left: 5px;
+  margin-right: 5px;
   height: 30px;
 }
 </style>

@@ -17,8 +17,6 @@
       <button @click="refreshPage" class="refresh-btn"><i class="fas fa-refresh animated-icon"></i></button>
       <div class="filter-bar">
         <select v-model="filterCategory" class="filter-category">
-          <option value="subject">Subject</option>
-          <option value="datetime">Date</option>
           <option value="datetime">Date</option>
           <option value="subject">Subject</option>
           <option value="reciever">Reciever</option>
@@ -29,15 +27,8 @@
         </button>
       </div>
     </div>
-    </div>
+  </div>
 
-
-    <transition-group name="fade" mode="out-in">
-      <div v-for="email in displayedEmails" :key="email.id" :class="{ 'email-item': true, 'unread-email': !email.read }"
-        @click="showEmailDetails(email)">
-        <div class="info">
-          <div class="sender">{{ email.recievers.join(", ") }}</div>
-          <div class="date-time">{{ email.dateTime }}</div>
   <div>
     <button @click="deleteSelectedEmails" :disabled="selectedEmailIds.length === 0" class="action-btn delete-btn">
       <i class="fas fa-trash"></i> Delete
@@ -45,33 +36,29 @@
   </div>
 
   <transition-group name="fade" mode="out-in">
-    
-  <div
-    v-for="email in displayedEmails"
-    :key="email.id"
-    :class="{ 'email-item': true, 'unread-email': !email.read }"
-    >
-    <span v-if="selectedEmailIds.includes(email.id)" class="select-label">Selected</span>
-    <div class="info">
-      <div class="sender">
-        {{ email.recievers.join(", ") }}
-        <i @click="sendDrafts(email)" class="edit-btn">
+
+    <div v-for="email in displayedEmails" :key="email.id" :class="{ 'email-item': true, 'unread-email': !email.read }">
+      <span v-if="selectedEmailIds.includes(email.id)" class="select-label">Selected</span>
+      <div class="info">
+        <div class="sender">
+          {{ email.recievers.join(", ") }}
+          <i @click="sendDrafts(email)" class="edit-btn">
             <i class="fas fa-paper-plane"></i>
-        </i>
+          </i>
+        </div>
+        <div class="date-time" @click="showEmailDetails(email)">{{ email.dateTime }}</div>
       </div>
-      <div class="date-time" @click="showEmailDetails(email)">{{ email.dateTime }}</div>
-    </div>
-    <div class="subject" @click="showEmailDetails(email)">{{ email.subject }}</div>
-    <div class="body" @click="showEmailDetails(email)">
-      <div v-if="!email.expanded" class="truncated-body">
-        {{ truncateBody(email.body, 120) }}
-        <span v-if="shouldTruncate(email.body)" @click="showEmailDetails(email)">See more</span>
-      </div>
-      <div v-else>
-        {{ email.body }}
-        <span @click="showEmailDetails(email)">See less</span>
-      </div>
-      <!--
+      <div class="subject" @click="showEmailDetails(email)">{{ email.subject }}</div>
+      <div class="body" @click="showEmailDetails(email)">
+        <div v-if="!email.expanded" class="truncated-body">
+          {{ truncateBody(email.body, 120) }}
+          <span v-if="shouldTruncate(email.body)" @click="showEmailDetails(email)">See more</span>
+        </div>
+        <div v-else>
+          {{ email.body }}
+          <span @click="showEmailDetails(email)">See less</span>
+        </div>
+        <!--
       <div v-if="hasAttachment(email.attachments)" class="attachment-section" @click="showEmailDetails(email)">
         <strong class="attachment-label">Attachments:</strong>
         <ul>
@@ -84,137 +71,67 @@
       -->
         <div v-if="true" class="attatchments-section" @click="showEmailDetails(email)">
           <strong class="attatchments-label">attatchments:</strong>
-            <ul>
-              <li v-for="(attachment, index) in email.attatchments" :key="index">
-                  {{ getattatchmentsIcon(attachment) }}<strong>{{ attachment.name }}</strong>
-              </li>
-            </ul>
+          <ul>
+            <li v-for="(attachment, index) in email.attatchments" :key="index">
+              {{ getattatchmentsIcon(attachment) }}<strong>{{ attachment.name }}</strong>
+            </li>
+          </ul>
         </div>
       </div>
 
-    <div class="meta" style="margin-top: 10px;">
-      <input
-        type="checkbox"
-        v-model="selectedEmailIds"
-        :value="email.id"
-        class="select-btn"
-        @change="handleCheckboxChange"
-        style="margin-left: 950px; width:30px; height:30px;"
-      />
+      <div class="meta" style="margin-top: 10px;">
+        <input type="checkbox" v-model="selectedEmailIds" :value="email.id" class="select-btn"
+          @change="handleCheckboxChange" style="margin-left: 950px; width:30px; height:30px;" />
+      </div>
     </div>
-  </div>
-  
-</transition-group>
+
+  </transition-group>
 
 
-    <div v-if="show" class="modal" >
-      <div class="modal-content">
-        <div class="info">
-          <div class="sender">{{ selectedEmail.recievers.join(", ") }}</div>
-          <div class="date-time">{{ selectedEmail.dateTime }}</div>
-        </div>
-        <div class="subject">{{ selectedEmail.subject }}</div>
-        <div class="body">
-          <div v-if="!email.expanded" class="truncated-body">
-            {{ truncateBody(email.body, 120) }}
-            <span v-if="shouldTruncate(email.body)" @click="showEmailDetails(email)">See more</span>
-          </div>
-          <div v-else>
-            {{ email.body }}
-            <span @click="showEmailDetails(email)">See less</span>
-          </div>
-          <div v-if="hasAttachment(email.attachments)" class="attachment-section">
-            <strong class="attachment-label">Attachments:</strong>
-            <ul>
-              <li v-for="(attachment, index) in email.attachments" :key="index">
-                {{ getAttachmentIcon(attachment) }} <strong>{{ attachment }}</strong>
-              </li>
-            </ul>
-          </div>
-          <div v-else class="no-attachments">No attachments</div>
-        </div>
-        <div class="meta">
-          <div class="priority">Priority: {{ email.priority }}</div>
-          <button @click.stop="deleteEmail(email.id)" class="delete-btn">Delete</button>
-        </div>
+  <div v-if="show" class="modal">
+    <div class="modal-content">
+      <div class="info">
+        <div class="sender">{{ selectedEmail.recievers.join(", ") }}</div>
+        <div class="date-time">{{ selectedEmail.dateTime }}</div>
       </div>
-    </transition-group>
-
-    <div v-if="show" class="modal">
-      <div class="modal-content">
-        <div class="info">
-          <div class="sender">{{ selectedEmail.sender }}</div>
-          <div class="date-time">{{ selectedEmail.dateTime }}</div>
-        </div>
-        <div class="subject">{{ selectedEmail.subject }}</div>
-        <div class="body">
-          {{ selectedEmail.body }}
-          <div v-if="hasAttachment(selectedEmail.attachments)" class="attachment-section">
-            <strong class="attachment-label">Attachments:</strong>
-            <ul>
-              <li v-for="(attachment, index) in selectedEmail.attachments" :key="index">
-                {{ getAttachmentIcon(attachment) }} <strong>{{ attachment }}</strong>
-              </li>
-            </ul>
-          </div>
-          <div v-else class="no-attachments">No attachments</div>
+      <div class="subject">{{ selectedEmail.subject }}</div>
+      <div class="body">
+        {{ selectedEmail.body }}
+        <div v-if="true" class="attatchments-section" @click="showEmailDetails(email)">
+          <strong class="attatchments-label">attatchments:</strong>
+          <ul>
+            <li v-for="(attachment, index) in email.attatchments" :key="index">
+              {{ getattatchmentsIcon(attachment) }}<strong>{{ attachment.name }}</strong>
+            </li>
+          </ul>
         </div>
         <div class="meta">
-          <div class="priority">Priority: {{ selectedEmail.priority }}</div>
+          <div class="priority"></div>
           <button @click.stop="closeEmailDetails" class="close-btn">
             <i class="fas fa-times"></i>
           </button>
         </div>
       </div>
     </div>
-
-
-    <div class="pagination">
-      <button @click="changePage('prev')" :disabled="currentPage === 1">Prev</button>
-      <span>{{ currentPage }}</span>
-      <button @click="changePage('next')" :disabled="currentPage === totalPages">Next</button>
-    </div>
-  </div>
-</template>
-            {{ selectedEmail.body }}
-            <div v-if="true" class="attatchments-section" @click="showEmailDetails(email)">
-              <strong class="attatchments-label">attatchments:</strong>
-              <ul>
-                <li v-for="(attachment, index) in email.attatchments" :key="index">
-                  {{ getattatchmentsIcon(attachment) }}<strong>{{ attachment.name }}</strong>
-                </li>
-              </ul>
-            </div>
-            <div class="meta">
-              <div class="priority"></div>
-              <button @click.stop="closeEmailDetails" class="close-btn">
-                <i class="fas fa-times"></i>
-              </button>
-            </div>
-        </div>
-    </div>
   </div>
   <div class="pagination">
-          <button @click="changePage('prev')" :disabled="currentPage === 1">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <span>{{ currentPage }}</span>
-          <button @click="changePage('next')" :disabled="currentPage === totalPages">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-    </div>
-  </template>
+    <button @click="changePage('prev')" :disabled="currentPage === 1">
+      <i class="fas fa-chevron-left"></i>
+    </button>
+    <span>{{ currentPage }}</span>
+    <button @click="changePage('next')" :disabled="currentPage === totalPages">
+      <i class="fas fa-chevron-right"></i>
+    </button>
+  </div>
+</template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { defineProps } from 'vue';
 import { format } from 'date-fns';
-let selectedEmailIds = ref([]); 
+let selectedEmailIds = ref([]);
 
-
-const filterQuery = ref('');
-let defaultSortCategory = 'priority';
-const deleteSelectedEmails = async() =>{
+const deleteSelectedEmails = async () => {
   console.log('Selected Email IDs:', selectedEmailIds.value);
   var array1 = JSON.stringify(selectedEmailIds.value);
   try {
@@ -253,8 +170,8 @@ const props = defineProps(['profileContactInfo', 'Draftemails']);
 const emails = ref([]);
 
 const getattatchmentsIcon = (attachment) => {
-  if (attachment.name.endsWith('.jpeg') || attachment.name.endsWith('.png')  || attachment.name.endsWith('.jpg')  ) {
-    return '📷'; 
+  if (attachment.name.endsWith('.jpeg') || attachment.name.endsWith('.png') || attachment.name.endsWith('.jpg')) {
+    return '📷';
   } else if (attachment.name.endsWith('.docx')) {
     return '📃';
   } else if (attachment.name.endsWith('.pdf')) {
@@ -276,8 +193,6 @@ props.Draftemails.forEach((inboxEmail) => {
     dateTime: inboxEmail.dateTime,
     read: inboxEmail.read,
     recievers: inboxEmail.recievers,
-    read:inboxEmail.read,
-    recievers:inboxEmail.recievers,
   };
   emails.value.push(transformedEmail);
 });
@@ -286,85 +201,47 @@ const refreshPage = () => {
   fetchEmails();
 };
 
-const hasAttachment = (attachments) => attachments && attachments.length > 0;
-let show = ref(false);
-  fetchEmails(); 
-};
-
 const sendDrafts = async (email) => {
-      const currentDate = new Date();
-      const formattedDateTime = format(currentDate, "yyyy-MM-dd h:mm a");
-      email.dateTime = formattedDateTime;
-      console.log(email.dateTime);
-    try {
-        const response = await fetch('http://localhost:8081/mail/sendDraftToInbox', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(email),
-        });
+  const currentDate = new Date();
+  const formattedDateTime = format(currentDate, "yyyy-MM-dd h:mm a");
+  email.dateTime = formattedDateTime;
+  console.log(email.dateTime);
+  try {
+    const response = await fetch('http://localhost:8081/mail/sendDraftToInbox', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(email),
+    });
 
-        if (!response.ok) {
-            throw new Error('Failed to send draft');
-        }
-        const data = await response.json();
-        emails.value = data;
-
-        console.log(data);
-    } catch (error) {
-        console.error('Error sending draft:', error.message);
-        // Handle the error as needed
+    if (!response.ok) {
+      throw new Error('Failed to send draft');
     }
+    const data = await response.json();
+    emails.value = data;
+
+    console.log(data);
+  } catch (error) {
+    console.error('Error sending draft:', error.message);
+    // Handle the error as needed
+  }
 };
 const hasAttachment = (attachments) => attachments && attachments.length > 0;
 let show = ref(false);
-
-const showEmailDetails = (email) => {
-    console.log('showEmailDetails called');
-    show.value = true;
-    selectedEmail = email;
-    console.log(selectedEmail.value);
-};
-
-const closeEmailDetails = () => {
-    show.value = false;
-    selectedEmail = null;
-};
 
 const showEmailDetails = (email) => {
   console.log('showEmailDetails called');
-  makeRead(email);
   show.value = true;
   selectedEmail = email;
-  console.log(selectedEmail);
+  console.log(selectedEmail.value);
 };
 
-const makeRead = async (email) => {
-  try {
-    const EmailAddress = props.profileContactInfo;
-    const response = await fetch('http://localhost:8081/mail/makeRead/${EmailAddress}/${email.id}', {
-      method: 'POST',
-      headers: {
-      'Content-Type': 'application/json',
-    },
-    });
-
-  if (!response.ok) {
-    throw new Error('HTTP error! Status: ${ response.status }');
-  }
-
-  const data = await response.json();
-  emails.value = data;
-  console.log(data);
-} catch (error) {
-  console.error('Error:', error);
-}
-};
 const closeEmailDetails = () => {
   show.value = false;
   selectedEmail = null;
 };
+
 const getAttachmentIcon = (attachment) => {
   if (attachment.endsWith('.jpeg') || attachment.endsWith('.png') || attachment.endsWith('.jpg')) {
     return '📷';
@@ -386,24 +263,24 @@ const sortEmails = async (sortOrder) => {
     const order = orderSorting === "asc" ? true : false;
     console.log(order);
 
-    const response = await fetch('http://localhost:8081/mail/sortEmail/${EmailAddress}/${currentFolder}/${sortingCategory.value}/${order}', {
+    const response = await fetch(`http://localhost:8081/mail/sortEmail/${EmailAddress}/${currentFolder}/${sortingCategory.value}/${order}`, {
       method: 'POST',
       headers: {
-      'Content-Type': 'application/json',
-    },
+        'Content-Type': 'application/json',
+      },
     });
 
-  if (!response.ok) {
-    throw new Error('HTTP error! Status: ${ response.status }');
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    emails.value = data;
+
+    console.log(data);
+  } catch (error) {
+    console.error('Error sorting emails:', error);
   }
-
-  const data = await response.json();
-  emails.value = data;
-
-  console.log(data);
-} catch (error) {
-  console.error('Error sorting emails:', error);
-}
 };
 
 
@@ -421,32 +298,6 @@ const filterEmails = async () => {
     console.log(" 3 " + filteringCategory);
     console.log(" 4 " + filteringQuery);
 
-    const response = await fetch('http://localhost:8081/mail/filter/${EmailAddress}/${currentFolder}/${filteringCategory}/${filteringQuery.value}', {
-      method: 'POST',
-      headers: {
-      'Content-Type': 'application/json',
-    },
-    });
-
-  if (!response.ok) {
-    throw new Error('HTTP error! Status: ${ response.status }');
-  }
-
-  const data = await response.json();
-  emails.value = data;
-
-  console.log(data);
-} catch (error) {
-  console.error('Error sorting emails:', error);
-}
-};
-/*
-const fetchAndUpdateEmails = async () => {
-  if(filtering == false){
-    await fetchEmails();
-  }
-};
-*/
     const response = await fetch(`http://localhost:8081/mail/filter/${EmailAddress}/${currentFolder}/${filteringCategory}/${filteringQuery.value}`, {
       method: 'POST',
       headers: {
@@ -468,22 +319,14 @@ const fetchAndUpdateEmails = async () => {
 };
 onMounted(() => {
   fetchEmails();
-  //fetchAndUpdateEmails();
-  //setInterval(fetchAndUpdateEmails, 2000);
 });
 
 
+let parsedEmails = [];
 const fetchEmails = async () => {
   try {
     const EmailAddress = props.profileContactInfo;
     const currentFolder = "draft";
-    console.log(EmailAddress + " , " + currentFolder);
-
-    const response = await fetch('http://localhost:8081/mail/getEmails/${EmailAddress}/${currentFolder}', {
-      method: 'POST',
-      headers: {
-      'Content-Type': 'application/json',
-    },
 
     const response = await fetch(`http://localhost:8081/mail/getEmails/${EmailAddress}/${currentFolder}`, {
       method: 'POST',
@@ -494,31 +337,19 @@ const fetchEmails = async () => {
       body: JSON.stringify({}),
     });
 
-  if (!response.ok) {
-    throw new Error('HTTP error! Status: ${ response.status }');
-  }
-
-  const data = await response.json();
-  emails.value = data;
-  console.log("fetch ", data);
-} catch (error) {
-  console.error('Error fetching emails:', error);
-}
-};
-
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    const data = await response.json();
-
-    const parsedEmails = data.map((inboxEmail) => {
+    const responecedata = await response.json();
+    console.log('Data:', responecedata);
+    parsedEmails = responecedata.map((inboxEmail) => {
       const transformedEmail = {
         id: inboxEmail.id,
         sender: inboxEmail.sender,
         subject: inboxEmail.subject,
         body: inboxEmail.body,
-        attachments: parseAttachments(inboxEmail.attachments),
+        attatchments: getParsedattatchments(inboxEmail.attatchments),
         priority: inboxEmail.priority,
         dateTime: inboxEmail.dateTime,
         read: inboxEmail.read,
@@ -527,21 +358,41 @@ const fetchEmails = async () => {
       return transformedEmail;
     });
 
+    console.log(parsedEmails + ' kkk');
+
     emails.value = parsedEmails;
     console.log("fetch ", parsedEmails);
   } catch (error) {
     console.error('Error fetching emails:', error);
   }
-  sortEmails("desc");
 };
 
-const parseAttachments = (attachments) => {
-  return attachments.map(attachment => ({
-    name: attachment.name,
-    type: attachment.type,
-    format: attachment.format,
-  }));
+const parseattatchments = (attatchments) => {
+  if (!Array.isArray(attatchments)) {
+    attatchments = [attatchments];
+  }
+
+  console.log("hellooo");
+
+  return attatchments.map((attatchments) => {
+    let name = attatchments && attatchments.name ? attatchments.name : "N/A";
+    let type = attatchments && attatchments.type ? attatchments.type : "N/A";
+    let format = attatchments && attatchments.format ? attatchments.format : "N/A";
+
+    return {
+      name,
+      type,
+      format,
+    };
+  });
 };
+
+const getParsedattatchments = (attatchments) => {
+  const parsed = parseattatchments(attatchments);
+  console.log('Parsed attatchments:', parsed);
+  return parsed;
+};
+
 const currentPage = ref(1);
 const totalPages = computed(() => Math.ceil(emails.value.length / emailsPerPage));
 const displayedEmails = computed(() => {
@@ -549,16 +400,11 @@ const displayedEmails = computed(() => {
   const endIndex = startIndex + emailsPerPage;
   return emails.value.slice(startIndex, endIndex);
 });
-const deleteEmail = (id) => {
-  console.log(id);
-  emails.value = emails.value.filter(email => email.id !== id);
-};
 
 const shouldTruncate = (body) => body.length > 120;
 const truncateBody = (body, maxLength) => {
   return body.length > maxLength ? body.slice(0, maxLength) + '...' : body;
 };
-//const truncateBody = (body) => shouldTruncate(body) ? body.slice(0, 120) : body;
 
 const expandBody = (email) => {
   email.expanded = !email.expanded;
@@ -576,115 +422,117 @@ const changePage = (direction) => {
 
 <style scoped>
 .action-btn {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    outline: none;
-    font-size: 14px;
-    margin-right: 10px;
-  }
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  outline: none;
+  font-size: 14px;
+  margin-right: 10px;
+}
 
-  .delete-btn {
-    background-color: #dc3545;
-    color: #fff;
-    margin-bottom: 20px;
-  }
+.delete-btn {
+  background-color: #dc3545;
+  color: #fff;
+  margin-bottom: 20px;
+}
 
-  .delete-btn:hover {
-    background-color: #c82333;
-  }
+.delete-btn:hover {
+  background-color: #c82333;
+}
 
-  .move-btn {
-    background-color: #007bff;
-    color: #fff;
-    margin-bottom: 20px;
-  }
+.move-btn {
+  background-color: #007bff;
+  color: #fff;
+  margin-bottom: 20px;
+}
 
-  .move-btn:hover {
-    background-color: #0056b3;
-  }
+.move-btn:hover {
+  background-color: #0056b3;
+}
 
-  .move-to-folder-container {
-    display: flex;
-    align-items: center;
-  }
+.move-to-folder-container {
+  display: flex;
+  align-items: center;
+}
 
-  .folder-input {
-    display: flex;
-    align-items: center;
-    margin-left: 20px;
+.folder-input {
+  display: flex;
+  align-items: center;
+  margin-left: 20px;
 
-  }
+}
 
-  .folder-input label {
-    margin-right: 10px;
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
+.folder-input label {
+  margin-right: 10px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
 
-  .folder-input input {
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    margin-right: 10px;
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
+.folder-input input {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 10px;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
 
-  .folder-input button {
-    padding: 10px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s, color 0.3s;
-    outline: none;
-    font-size: 14px;
-    margin-right: auto;
-  }
+.folder-input button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  outline: none;
+  font-size: 14px;
+  margin-right: auto;
+}
 
-  .folder-input button:hover {
-    background-color: #0056b3;
-  }
+.folder-input button:hover {
+  background-color: #0056b3;
+}
 
-  .folder-input input[type="text"]:focus {
-    border-color: #007bff;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
-  }
+.folder-input input[type="text"]:focus {
+  border-color: #007bff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
 
-  .folder-input button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  .email-item .checkbox-container {
-    display: inline-block;
-    margin-right: 10px;
-  }
+.folder-input button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
 
-  .email-item .checkbox-container input[type="checkbox"] {
-    display: none;
-  }
+.email-item .checkbox-container {
+  display: inline-block;
+  margin-right: 10px;
+}
 
-  .email-item .custom-checkbox {
-    width: 20px; 
-    height: 20px; 
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    position: relative;
-  }
+.email-item .checkbox-container input[type="checkbox"] {
+  display: none;
+}
 
-  .email-item .custom-checkbox.checked {
-    background-color: #007bff;
-    border-color: #007bff;
-  }
-  
-  .email-item .select-label {
-    font-weight: bold;
-    color: #0e8a24; 
-  }
+.email-item .custom-checkbox {
+  width: 20px;
+  height: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+}
+
+.email-item .custom-checkbox.checked {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+.email-item .select-label {
+  font-weight: bold;
+  color: #0e8a24;
+}
+
 .search-bars-container {
   display: flex;
   justify-content: space-between;
@@ -791,112 +639,6 @@ const changePage = (direction) => {
 
   to {
     transform: rotate(360deg);
-  .inbox-title {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .email-item {
-    border: 1px solid #ddd;
-    padding: 15px;
-    margin-bottom: 15px;
-    background-color: #fff;
-    border-radius: 8px;
-    transition: transform 0.3s ease-in-out;
-  }
-  
-  .email-item:hover {
-    transform: scale(1.02);
-  }
-  
-  .info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .sender {
-    font-weight: bold;
-    color: #007BFF;
-  }
-  
-  .date-time {
-    color: #888;
-  }
-  
-  .subject {
-    margin-top: 5px;
-    font-size: 18px;
-    color: #333;
-  }
-  
-  .body {
-    margin-top: 10px;
-    color: #555;
-  }
-  
-  .meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 10px;
-  }
-  
-  .priority {
-    font-weight: bold;
-  }
-  
-  .delete-btn {
-    background-color: #ff5555;
-    color: #fff;
-    border: none;
-    padding: 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-  
-  .delete-btn:hover {
-    background-color: #dd4444;
-  }
-  .refresh-btn {
-    width:40px;
-  height:40px;   
-  margin-top:30px;
-  background-color: #007BFF;
-  color: #fff;
-  border: none;
-  padding: 8px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  outline: none;
-}
-
-.refresh-btn:hover {
-  background-color: #0056b3;
-}
-
-.animated-icon {
-  font-size: 18px;
-  animation: rotate 1s infinite linear;
-}
-
-@keyframes rotate {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-  .truncated-body {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-height: 3em; 
-    line-height: 1.5em;
   }
 }
 
@@ -946,10 +688,6 @@ ul {
 
 .pagination button {
   margin: 0 5px;
-  padding: 8px;
-  border: 1px solid #ddd;
-  background-color: #fff;
-  cursor: pointer;
   padding: 8px 12px;
   border: 1px solid #ddd;
   background-color: #fff;
@@ -961,8 +699,6 @@ ul {
 
 .pagination button:disabled {
   cursor: not-allowed;
-  background-color: #ffffff;
-}
   background-color: #eee;
   color: #888;
   border-color: #eee;
@@ -989,19 +725,6 @@ ul {
   color: #fff;
   border-color: #007BFF;
 }
-  .sort-bar {
-    display: flex;
-    margin-top: 20px;
-    transition: transform 0.3s;
-    margin-bottom: 20px;
-    margin-left: 2px;
-    margin-right: 2px;
-    width: 600px;
-    border: 1px solid #ffffff;
-    border-radius: 4px;
-    overflow: hidden;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  }
 
 .sort-bar {
   display: flex;
@@ -1108,24 +831,6 @@ ul {
   width: 100%;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
-  .sort-bar,
-  .sort-bar input:focus {
-    border-color: #053a72;
-  }
-  .filter-bar {
-    display: flex;
-    margin-top: 20px;
-    transition: transform 0.3s;
-    margin-bottom: 20px;
-    margin-left: 0px;
-    margin-right: 2px;
-    width: 600px;
-    border: 1px solid #ffffff;
-    border-radius: 4px;
-    overflow: hidden;
-    width:100%;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  }
 
 
 .filter-bar:hover {
@@ -1268,7 +973,6 @@ ul {
   background-color: #e2e2e2;
   border-left: 4px solid #170cab;
 }
-</style>
 
 .edit-btn {
   background-color: #ffffff;
@@ -1277,13 +981,12 @@ ul {
   margin-left: 2px;
   padding: 8px 16px;
   border-radius: 4px;
-  width:30px;
-  
+  width: 30px;
+
 }
 
 .edit-btn:hover {
   background-color: #ffffff;
   transform: scale(1.5);
-}
-</style>
+}</style>
   
