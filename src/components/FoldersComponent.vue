@@ -47,9 +47,9 @@
 
                 <td>{{ email.priority }}</td>
                 <td>{{ email.sender }}</td>
-                <td>{{ email.date }}</td>
+                <td>{{ email.dateTime }}</td>
                 <td>{{ email.subject }}</td>
-                <td>{{ email.content }}</td>
+                <td>{{ email.body }}</td>
                 <td>
                 </td>
                 <td class="align-middle">
