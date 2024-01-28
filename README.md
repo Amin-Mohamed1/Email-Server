@@ -23,7 +23,9 @@ npm run dev
 ```
 
 ### Compile and Minify for Production
-
 ```sh
 npm run build
 ```
+
+
+https://github.com/WorldisAmen/Email-Server/assets/145727573/44569f10-ae06-42f7-8b64-82245f7db659
